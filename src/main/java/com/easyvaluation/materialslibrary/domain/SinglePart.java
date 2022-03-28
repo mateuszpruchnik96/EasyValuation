@@ -9,11 +9,17 @@ import javax.persistence.Entity;
 
 @Entity
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @DiscriminatorValue("SINGLEPART")
 public class SinglePart extends Item{
-    float mass;
     String producer;
     String symbol;
+    float mass;
+
+    public SinglePart(String producer, String symbol, float mass){
+        this.producer = producer;
+        this.symbol = symbol;
+        this.mass = mass;
+    }
 }

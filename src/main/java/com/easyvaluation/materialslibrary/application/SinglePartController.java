@@ -26,6 +26,7 @@ public class SinglePartController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @GetMapping("/hello")
     public String sayHello() {return "Hello";}
 
