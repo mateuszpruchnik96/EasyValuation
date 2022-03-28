@@ -26,26 +26,26 @@ public class Project extends BaseEntity {
 
     private String itemsJSON;
 
-//    @Convert(converter = HashMapConverter.class)
-//    private Map<Long, Integer> items;
+    @Convert(converter = HashMapConverter.class)
+    private Map<Long, Integer> items;
 
     public Project(){
-//        this.items = Maps.newHashMap();
+        this.items = Maps.newHashMap();
         this.openingProjectTime = LocalDateTime.now();
     }
 
-//    public void setItems(Long itemId, Integer integer) {
-//        this.items.put(itemId, integer);
-//    }
+    public void setItems(Long itemId, Integer integer) {
+        this.items.put(itemId, integer);
+    }
 
-//    public void serializeProductItems() throws JsonProcessingException{
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        this.itemsJSON = objectMapper.writeValueAsString(items);
-//    }
-//
-//    public void deserializeProductItems() throws IOException {
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        this.items = objectMapper.readValue(itemsJSON, HashMap.class);
-//    }
+    public void serializeProductItems() throws JsonProcessingException{
+        ObjectMapper objectMapper = new ObjectMapper();
+        this.itemsJSON = objectMapper.writeValueAsString(items);
+    }
+
+    public void deserializeProductItems() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        this.items = objectMapper.readValue(itemsJSON, HashMap.class);
+    }
 
 }
