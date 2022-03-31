@@ -34,4 +34,13 @@ public abstract class Item extends BaseEntity {
 
     String description;
 
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
 }
