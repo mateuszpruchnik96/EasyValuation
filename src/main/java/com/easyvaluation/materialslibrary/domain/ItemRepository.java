@@ -3,10 +3,19 @@ package com.easyvaluation.materialslibrary.domain;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+import java.util.AbstractMap;
 import java.util.List;
 
+@Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    @Query(value="select c from Item c where c.type=:type")
-    public List<Item> findAllByType(@Param("type") String type);
+
+    @Query(value="select i from Item i where i.type=:type")
+    List<Item> findAllByType(@Param("type") String type);
+
+//    @Query(value = "SELECT i FROM Item i WHERE i.item_name LIKE ':letters%'")
+//    List<AbstractMap.SimpleEntry<Long,String>> findByFirstLetters(@Param("letters") String letters);
+
+    List<Item> findByItemNameStartsWithIgnoreCase(String letters);
 }

@@ -27,7 +27,7 @@ public abstract class Item extends BaseEntity {
     @JoinColumn(name = "project_id")
     Project project;
 
-    @Column
+    @Column(name = "item_name")
     String itemName;
 
     float price;

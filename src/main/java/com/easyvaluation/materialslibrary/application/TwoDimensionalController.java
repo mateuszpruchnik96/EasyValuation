@@ -1,9 +1,6 @@
 package com.easyvaluation.materialslibrary.application;
 
-import com.easyvaluation.materialslibrary.domain.SinglePart;
-import com.easyvaluation.materialslibrary.domain.SinglePartRepository;
-import com.easyvaluation.materialslibrary.domain.TwoDimensional;
-import com.easyvaluation.materialslibrary.domain.TwoDimensionalRepository;
+import com.easyvaluation.materialslibrary.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +14,9 @@ public class TwoDimensionalController {
     @Autowired
     TwoDimensionalRepository twoDimensionalRepository;
 
+    @Autowired
+    TwoDimensionalService twoDimensionalService;
+
     @GetMapping("/materials/twodimensional/{id}")
     public ResponseEntity<TwoDimensional> getOne(@PathVariable("id") Long id){
         Optional<TwoDimensional> service = twoDimensionalRepository.findById(id);
@@ -27,16 +27,16 @@ public class TwoDimensionalController {
         }
     }
 
+    @PostMapping("/materials/twodimensional")
+    public ResponseEntity<TwoDimensional> addNew(@RequestBody TwoDimensional material){
+        return ResponseEntity.created(null).body(twoDimensionalService.save(material));
+    }
+
   /*
   *@GetMapping("/materials")
   *  public ResponseEntity<List<TwoDimensional>> getMany(){
   *     return ResponseEntity.ok(twoDimensionalRepository.findAll());
   *}
   */
-
-    @PostMapping("/materials/twodimensional")
-    public ResponseEntity<TwoDimensional> addNew(@RequestBody TwoDimensional twoDimensional){
-           return ResponseEntity.created(null).body(twoDimensionalRepository.save(twoDimensional));
-    }
 
 }

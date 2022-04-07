@@ -27,15 +27,6 @@ public class SinglePartController {
         }
     }
 
-    @GetMapping("/hello")
-    public String sayHello() {return "Hello";}
-
-    @GetMapping("/hello2")
-    public String sayHello2() {return "Hello2";}
-
-    @GetMapping("/hello3")
-    public String sayHello3() {return "Hello3";}
-
     @CrossOrigin
     @GetMapping("/materials/singlepart")
     public ResponseEntity<List<SinglePart>> getMany(){

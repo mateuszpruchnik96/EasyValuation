@@ -15,12 +15,36 @@ public class ItemService implements AbstractService<Item> {
     @Override
     public Item save(Item entity) {
         entity = itemRepository.save(entity);
-        return null;
+        return entity;
     }
 
-    public List<Item> getItemsById(List<Long> ids){
+    public List<Item> findItemsById(List<Long> ids) throws NoSuchFieldException {
+        List<Item> items = itemRepository.findAllById(ids);
+        if(!items.isEmpty()) {
+            return items;
+        } else {
+            throw new NoSuchFieldException("No match");
+        }
+    }
 
-        return null;
+    public List<String> findItemNamesByIds(List<Long> ids) throws NoSuchFieldException {
+        List<String> names = new ArrayList<>();
+        try {
+            List<Item> items = findItemsById(ids);
+            items.stream().forEach(item -> names.add(item.getItemName()));
+        } catch (NoSuchFieldException e){
+            throw e;
+        }
+        return names;
+    }
+
+    public List<AbstractMap.SimpleEntry<Long,String>> findItemsByFirstLetters(String letters){
+
+        List<Item> list = itemRepository.findByItemNameStartsWithIgnoreCase(letters);
+        List<AbstractMap.SimpleEntry<Long,String>> idNameList = new ArrayList<>();
+        list.stream().forEach(item -> idNameList
+                .add(new AbstractMap.SimpleEntry<>(Long.valueOf(item.getId()),item.getItemName())));
+        return idNameList;
     }
 
     public List<AbstractMap.SimpleEntry<Long, String>> getItemsByType(String type) throws NoSuchFieldException {
