@@ -1,14 +1,9 @@
 package com.easyvaluation.projects.domain;
 
-import com.easyvaluation.materialslibrary.domain.Item;
+import com.easyvaluation.materialslibrary.domain.item.Item;
 import com.easyvaluation.materialslibrary.domain.SinglePart;
 import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ProjectTest {
     @Test
@@ -22,8 +17,8 @@ class ProjectTest {
         item1.setId(2);
 
         //when
-//        project.setItems(item1.getId(), Integer.valueOf(3));
-//        project.setItems(item2.getId(), Integer.valueOf(2));
+//        project.addItem(item1.getId(), Integer.valueOf(3));
+//        project.addItem(item2.getId(), Integer.valueOf(2));
 //
 //        //then
 //        assertThat(project.getItems().get(item1.getId()), equalTo(Integer.valueOf(3)));

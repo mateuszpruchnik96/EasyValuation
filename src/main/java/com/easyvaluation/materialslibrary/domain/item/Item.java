@@ -1,10 +1,8 @@
-package com.easyvaluation.materialslibrary.domain;
+package com.easyvaluation.materialslibrary.domain.item;
 
 import com.easyvaluation.foundations.domain.BaseEntity;
 import com.easyvaluation.projects.domain.Project;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
@@ -23,9 +21,9 @@ public abstract class Item extends BaseEntity {
     @Enumerated(EnumType.STRING)
     ItemType type;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "project_id")
-    Project project;
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "project_id")
+//    Project project;
 
     @Column(name = "item_name")
     String itemName;

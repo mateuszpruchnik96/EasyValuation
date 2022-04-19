@@ -1,16 +1,18 @@
 package com.easyvaluation.projects.domain;
 
-import com.easyvaluation.materialslibrary.domain.Item;
+import com.easyvaluation.materialslibrary.domain.item.Item;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import java.io.IOException;
 import java.util.Map;
 
+@Converter
 public class HashMapConverter implements AttributeConverter<Map<Item,Integer>, String> {
-
+    @Autowired
     ObjectMapper objectMapper;
 
     @Override

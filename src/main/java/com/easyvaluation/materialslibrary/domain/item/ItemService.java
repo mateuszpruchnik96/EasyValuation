@@ -1,6 +1,8 @@
-package com.easyvaluation.materialslibrary.domain;
+package com.easyvaluation.materialslibrary.domain.item;
 
 import com.easyvaluation.foundations.domain.AbstractService;
+import com.easyvaluation.materialslibrary.domain.item.Item;
+import com.easyvaluation.materialslibrary.domain.item.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

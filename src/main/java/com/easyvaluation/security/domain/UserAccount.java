@@ -1,6 +1,8 @@
 package com.easyvaluation.security.domain;
 
 import com.easyvaluation.foundations.domain.BaseEntity;
+import com.easyvaluation.projects.domain.Project;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +24,7 @@ public class UserAccount extends BaseEntity {
     private String firstName;
     private String lastName;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Column(unique = true)
@@ -30,11 +33,18 @@ public class UserAccount extends BaseEntity {
     LocalDateTime registrationTime;
     LocalDateTime recentLoginTime;
 
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    List<Project> projects;
+
+    @Enumerated(EnumType.STRING)
+    UserType userType;
+
     @OneToMany(mappedBy = "userAccount", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     List<UserRole> roles;
 
     public UserAccount(){
         this.registrationTime = LocalDateTime.now();
         this.roles = new ArrayList<>();
+        this.userType = UserType.USER;
     }
 }

@@ -1,6 +1,5 @@
 package com.easyvaluation;
 
-import com.easyvaluation.authentication.application.JwtFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -15,11 +14,11 @@ public class EasyValuationApplication {
 		SpringApplication.run(EasyValuationApplication.class, args);
 	}
 
-	@Bean
-	public FilterRegistrationBean filterRegistrationBean(){
-		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-		filterRegistrationBean.setFilter(new JwtFilter());
-		filterRegistrationBean.setUrlPatterns(Collections.singleton("/hello"));
-		return filterRegistrationBean;
-	}
+//	@Bean
+//	public FilterRegistrationBean filterRegistrationBean(){
+//		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+//		filterRegistrationBean.setFilter(new JwtFilter());
+//		filterRegistrationBean.setUrlPatterns(Collections.singleton("/projects"));
+//		return filterRegistrationBean;
+//	}
 }

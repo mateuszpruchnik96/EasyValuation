@@ -1,6 +1,5 @@
 package com.easyvaluation.materialslibrary.application;
 
-import com.easyvaluation.materialslibrary.domain.Item;
 import com.easyvaluation.materialslibrary.domain.SinglePart;
 import com.easyvaluation.materialslibrary.domain.SinglePartRepository;
 import org.springframework.beans.factory.annotation.Autowired;

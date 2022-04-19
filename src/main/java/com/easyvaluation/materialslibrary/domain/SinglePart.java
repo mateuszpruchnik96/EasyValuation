@@ -1,5 +1,6 @@
 package com.easyvaluation.materialslibrary.domain;
 
+import com.easyvaluation.materialslibrary.domain.item.Item;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import javax.persistence.Entity;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @DiscriminatorValue("SINGLEPART")
-public class SinglePart extends Item{
+public class SinglePart extends Item {
     String producer;
     String symbol;
     float mass;

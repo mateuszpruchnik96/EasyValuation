@@ -1,11 +1,11 @@
-package com.easyvaluation.materialslibrary.domain;
+package com.easyvaluation.materialslibrary.domain.item;
 
+import com.easyvaluation.materialslibrary.domain.item.Item;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.AbstractMap;
 import java.util.List;
 
 @Repository

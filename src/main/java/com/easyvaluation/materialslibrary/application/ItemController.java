@@ -1,10 +1,9 @@
 package com.easyvaluation.materialslibrary.application;
 
-import com.easyvaluation.materialslibrary.domain.Item;
-import com.easyvaluation.materialslibrary.domain.ItemRepository;
-import com.easyvaluation.materialslibrary.domain.ItemService;
+import com.easyvaluation.materialslibrary.domain.item.Item;
+import com.easyvaluation.materialslibrary.domain.item.ItemRepository;
+import com.easyvaluation.materialslibrary.domain.item.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

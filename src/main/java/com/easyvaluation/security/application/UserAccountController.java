@@ -25,7 +25,7 @@ public class UserAccountController {
         return ResponseEntity.ok(userAccountRepository.findAll());
     }
 
-    @PostMapping("/user-accounts")
+    @PostMapping("/user-accounts/register")
     public ResponseEntity<UserAccount> save(@RequestBody UserAccount userAccount){
         try {
             UserAccount savedUser = userAccountService.save(userAccount);
