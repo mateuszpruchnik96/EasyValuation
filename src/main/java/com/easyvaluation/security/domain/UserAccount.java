@@ -30,8 +30,8 @@ public class UserAccount extends BaseEntity {
     @Column(unique = true)
     private String email;
 
-    LocalDateTime registrationTime;
-    LocalDateTime recentLoginTime;
+    private LocalDateTime registrationTime;
+    private LocalDateTime recentLoginTime;
 
     @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Project> projects;
@@ -41,6 +41,8 @@ public class UserAccount extends BaseEntity {
 
     @OneToMany(mappedBy = "userAccount", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     List<UserRole> roles;
+
+    private String refreshToken;
 
     public UserAccount(){
         this.registrationTime = LocalDateTime.now();

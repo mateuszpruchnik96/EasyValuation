@@ -1,5 +1,6 @@
 package com.easyvaluation.authentication.domain;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,9 +25,14 @@ public class JwtFilter extends BasicAuthenticationFilter {
 
         String header = httpServletRequest.getHeader("Authorization");
         String endpoint =httpServletRequest.getServletPath();
-        if( !endpoint.endsWith("/login") && !endpoint.endsWith("/register")){
-            UsernamePasswordAuthenticationToken authResult = tokenProvider.getAuthenticationByToken(header);
-            SecurityContextHolder.getContext().setAuthentication(authResult);
+        if( !endpoint.endsWith("/login") && !endpoint.endsWith("/register") && !endpoint.endsWith("/h2-console")){
+            try {
+                UsernamePasswordAuthenticationToken authResult = tokenProvider.getAuthenticationByToken(header);
+                SecurityContextHolder.getContext().setAuthentication(authResult);
+            } catch (ExpiredJwtException e){
+                httpServletResponse.sendError(401, "ExpiredJwtException");
+            }
+
         }
         filterChain.doFilter(httpServletRequest,httpServletResponse);
     }

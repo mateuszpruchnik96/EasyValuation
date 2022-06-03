@@ -36,9 +36,11 @@ public class UserAccountService implements AbstractService<UserAccount> {
         } catch(Error e){
             return new AbstractMap.SimpleEntry(false, "Wrong logorpass");
         }
+    }
 
-
-
+    public String setRefreshToken(UserAccount userAccount, String refreshToken){
+        userAccountRepository.setRefreshToken(userAccount.getLogin(), refreshToken);
+        return refreshToken;
     }
 
 }
