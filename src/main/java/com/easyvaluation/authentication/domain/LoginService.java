@@ -12,11 +12,15 @@ import java.security.SecureRandom;
 
 @Service
 public class LoginService{
-    @Autowired
-    UserAccountService userAccountService;
+
+    private final UserAccountService userAccountService;
+    private final TokenProvider tokenProvider;
 
     @Autowired
-    TokenProvider tokenProvider;
+    public LoginService(UserAccountService userAccountService, TokenProvider tokenProvider){
+        this.userAccountService = userAccountService;
+        this.tokenProvider = tokenProvider;
+    }
 
     // Random data generator
     SecureRandom secureRandom = new SecureRandom();
@@ -32,7 +36,7 @@ public class LoginService{
             return "{\"easyValuationToken\": \"" + tokenProvider.createToken(userAccount) + "\", " +
             "\"easyValuationRefreshToken\": \"" + this.generateRefreshToken(userAccount) + "\"}";
 //            return jwtTokenCookie;
-        }else{
+        } else {
             throw new EntityNotFoundException();
         }
     }

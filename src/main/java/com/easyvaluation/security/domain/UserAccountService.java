@@ -34,7 +34,7 @@ public class UserAccountService implements AbstractService<UserAccount> {
             }
 
         } catch(Error e){
-            return new AbstractMap.SimpleEntry(false, "Wrong logorpass");
+            return new AbstractMap.SimpleEntry(false, "Wrong log or pass");
         }
     }
 

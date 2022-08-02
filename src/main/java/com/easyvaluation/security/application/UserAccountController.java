@@ -25,6 +25,11 @@ public class UserAccountController {
         return ResponseEntity.ok(userAccountRepository.findAll());
     }
 
+    @GetMapping("/admin")
+    public ResponseEntity<String> getAdminPanel() {
+        return ResponseEntity.ok("Admin panel");
+    }
+
     @PostMapping("/user-accounts/register")
     public ResponseEntity<UserAccount> save(@RequestBody UserAccount userAccount){
         try {

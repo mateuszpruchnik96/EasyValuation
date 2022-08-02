@@ -24,7 +24,7 @@ public class UserAccount extends BaseEntity {
     private String firstName;
     private String lastName;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Column(unique = true)
@@ -45,6 +45,14 @@ public class UserAccount extends BaseEntity {
     private String refreshToken;
 
     public UserAccount(){
+        this.registrationTime = LocalDateTime.now();
+        this.roles = new ArrayList<>();
+        this.userType = UserType.USER;
+    }
+
+    public UserAccount(String login, String password){
+        this.login = login;
+        this.password = password;
         this.registrationTime = LocalDateTime.now();
         this.roles = new ArrayList<>();
         this.userType = UserType.USER;
