@@ -6,6 +6,7 @@ import com.easyvaluation.security.domain.UserAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +39,7 @@ public class UserAccountController {
         }catch(DataIntegrityViolationException e){
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.add(HttpHeaders.WARNING, "Login or email already in use");
-            return ResponseEntity.internalServerError()
+            return ResponseEntity.status(HttpStatus.CONFLICT)
                     .headers(responseHeaders)
                     .body(userAccount);
         }catch (Exception e){
@@ -49,4 +50,6 @@ public class UserAccountController {
                     .body(userAccount);
         }
     }
+
+
 };

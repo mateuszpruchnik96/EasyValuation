@@ -1,42 +1,27 @@
 package com.easyvaluation.authentication.application;
 
 import com.easyvaluation.authentication.domain.LoginService;
-import com.easyvaluation.authentication.domain.TokenProvider;
-import com.easyvaluation.materialslibrary.domain.SinglePart;
-import com.easyvaluation.materialslibrary.domain.item.Item;
 import com.easyvaluation.security.domain.UserAccount;
-import com.easyvaluation.security.domain.UserAccountRepository;
-import com.easyvaluation.security.domain.UserAccountService;
 import com.easyvaluation.security.domain.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.http.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.ArgumentMatchers.contains;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 //@Sql(statements = "select * from user_account")
@@ -58,34 +43,44 @@ public class LoginControllerIT {
     @LocalServerPort
     private int port;
 
+    private UserAccount user;
+    private String url;
+
+    @BeforeEach
+    void beforeEach(){
+        user = new UserAccount("jan", "lokiloki");
+        url = "http://localhost:" + port + "/login";
+    }
+
     @Test
     void contextLoads(){
         assertThat(loginService, notNullValue());
         assertThat(mockMvc, notNullValue());
+        assertThat(testRestTemplate, notNullValue());
     }
 
     @Test
     void loginEndpointShouldReturnResponseWithTokensAnd200StatusInCaseOfProperLoginAndPass() throws Exception {
         //given
-        UserAccount user = new UserAccount();
-        user.setLogin("jan");
-        user.setPassword("lokiloki");
 
         //when
+        ResponseEntity<String> response = this.testRestTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(user), String.class);
+        String responseBody = response.getBody();
+        ObjectMapper mapper = new ObjectMapper();
+        Map map = mapper.readValue(responseBody, Map.class);
+
         //then
-        this.mockMvc
-                .perform(MockMvcRequestBuilders.post("/login", user))
-                .andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string(containsString("Token")));
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+        assertThat(map.get("easyValuationToken"), instanceOf(String.class));
+
     }
 
     @Test
     public void properUserLoginShouldReturnResponseWithValidTokenForUserAvailableEndpoint() throws Exception {
         //given
-        UserAccount user = new UserAccount("jan", "lokiloki");
 
         //when
-        String result = this.testRestTemplate.postForObject("http://localhost:" + port + "/login", user,
+        String result = this.testRestTemplate.postForObject(url, user,
                 String.class);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -102,15 +97,12 @@ public class LoginControllerIT {
     @Test
     public void properUserLoginShouldReturnResponseWithInvalidToken403ForAdminAvailableEndpoint() throws Exception {
         //given
-        UserAccount user = new UserAccount("jan", "lokiloki");
-//        user.setUserType(UserType.ADMIN);
 
         //when
-        String result = this.testRestTemplate.postForObject("http://localhost:" + port + "/login", user,
-                String.class);
+        String result = this.testRestTemplate.postForObject(url, user, String.class);
 
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, String> map = mapper.readValue(result, Map.class);
+        Map map = mapper.readValue(result, Map.class);
 
         //then
         mockMvc.perform(
@@ -118,5 +110,91 @@ public class LoginControllerIT {
                         .header("Authorization", "Bearer " + map.get("easyValuationToken")))
                     .andExpect(status().is(403));
     }
+
+    @Test
+    public void properAdminLoginShouldReturnResponseWithValidTokenForAdminAvailableEndpoint() throws Exception {
+        //given
+        user.setUserType(UserType.ADMIN);
+
+        //when
+        String result = this.testRestTemplate.postForObject(url, user, String.class);
+
+        ObjectMapper mapper = new ObjectMapper();
+        Map map = mapper.readValue(result, Map.class);
+
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/admin").contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer " + map.get("easyValuationToken")))
+                .andExpect(status().is(200)).andExpect(content().string("Admin panel"));
+    }
+
+    @Test
+    public void improperLoginShouldReturn404Response() throws Exception {
+        //given
+        user.setLogin("someWeirdNotExistingLogin");
+
+        //when
+        ResponseEntity<String> response = this.testRestTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(user), String.class);
+        System.out.println(response);
+
+        //then
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
+
+    }
+
+//    @TestFactory
+//    Collection<DynamicTest> endpointsLoginRegistrationH2ConsoleShouldBeAvailableWithoutToken(){
+//        List<String> endpoints = Arrays.asList("/login", "/user-accounts/register", "/h2-console");
+//
+//        Collection<DynamicTest> dynamicTests = new ArrayList<>();
+//
+//        for(int i = 0; i < endpoints.size(); i++){
+//            String endpoint = endpoints.get(i);
+//            Executable executable = new Executable() {
+//                @Override
+//                public void execute() throws Throwable {
+//
+//                }
+//            };
+//            ResponseEntity<String> response;
+//            HttpStatus responseStatusCode;
+//
+//            switch (endpoint){
+//                case "/login":
+//                    response = this.testRestTemplate.exchange("http://localhost:" + port + endpoint, HttpMethod.POST, new HttpEntity<>(user), String.class);
+//                    responseStatusCode = response.getStatusCode();
+//
+//                    executable = () -> {
+//                        assertThat(responseStatusCode, equalTo(HttpStatus.OK));
+//                    };
+//                    break;
+//
+//                case "/user-accounts/register":
+//                    response = this.testRestTemplate.exchange("http://localhost:" + port + endpoint, HttpMethod.POST, new HttpEntity<>(user), String.class);
+//                    responseStatusCode = response.getStatusCode();
+//
+//                    executable = () -> {
+//                        assertThat(response.getStatusCode(), equalTo(HttpStatus.CONFLICT));
+//                        assertThat(response.getHeaders().get("Warning").get(0), equalTo("Login or email already in use"));
+//                    };
+//                    break;
+//
+//                    case "/h2-console":
+//                        response = this.testRestTemplate.exchange("http://localhost:" + port + endpoint, HttpMethod.GET, new HttpEntity<>(user), String.class);
+//                        responseStatusCode = response.getStatusCode();
+//
+//                        executable = () -> {
+//                            assertThat(responseStatusCode, equalTo(HttpStatus.OK));
+//                        };
+//                        break;
+//            }
+//
+//            String name = "Test case: " + endpoint;
+//            DynamicTest dynamicTest = DynamicTest.dynamicTest(name, executable);
+//            dynamicTests.add(dynamicTest);
+//        }
+//        return dynamicTests;
+//    }
 
 }

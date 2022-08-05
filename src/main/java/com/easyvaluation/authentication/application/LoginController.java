@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,10 +27,14 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserAccount user, HttpServletResponse response){
-        String jwtToken = loginService.login(user);
+        try {
+            String jwtToken = loginService.login(user);
+            return new ResponseEntity<>(jwtToken, HttpStatus.OK);
+        } catch(EntityNotFoundException exception) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
 //        response.addCookie(new Cookie("Secure-Fgp", loginService.generateFingerprint()));
 //        response.addHeader("Set-Cookie", loginService.generateFingerprint());
-        return new ResponseEntity<>(jwtToken, HttpStatus.OK);
     }
 
     @PostMapping("/refreshtoken")

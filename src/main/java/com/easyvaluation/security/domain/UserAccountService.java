@@ -33,7 +33,7 @@ public class UserAccountService implements AbstractService<UserAccount> {
                 return new AbstractMap.SimpleEntry(false, "Wrong login or password");
             }
 
-        } catch(Error e){
+        } catch(NullPointerException e){
             return new AbstractMap.SimpleEntry(false, "Wrong log or pass");
         }
     }

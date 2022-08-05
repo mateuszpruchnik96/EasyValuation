@@ -31,7 +31,7 @@ public class JwtFilter extends BasicAuthenticationFilter {
     public void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws IOException, ServletException {
 
         String header = httpServletRequest.getHeader("Authorization");
-        String endpoint =httpServletRequest.getServletPath();
+        String endpoint = httpServletRequest.getServletPath();
         if( !endpoint.endsWith("/login") && !endpoint.endsWith("/register") && !endpoint.endsWith("/h2-console")){
             try {
                 UsernamePasswordAuthenticationToken authResult =
@@ -40,7 +40,6 @@ public class JwtFilter extends BasicAuthenticationFilter {
             } catch (ExpiredJwtException e){
                 httpServletResponse.sendError(401, "ExpiredJwtException");
             }
-
         }
         filterChain.doFilter(httpServletRequest,httpServletResponse);
     }
