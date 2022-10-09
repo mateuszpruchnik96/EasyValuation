@@ -39,10 +39,13 @@ public class LoginController {
 
     @PostMapping("/refreshtoken")
     public ResponseEntity<String> refreshToken(@RequestBody String refreshToken, HttpServletRequest request, HttpServletResponse response){
-        String tokens = request.getHeader("Authorization");
+        try {
 
-//        String jwtToken = loginService.login(user);
-//        return new ResponseEntity<>(jwtToken, HttpStatus.OK);
-        return null;
+            String newTokens = loginService.generateNewTokensAfterRefresh(refreshToken);
+
+            return new ResponseEntity<>(newTokens, HttpStatus.OK);
+        } catch (EntityNotFoundException exception) {
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 }

@@ -42,7 +42,7 @@ public class UserAccount extends BaseEntity {
     @OneToMany(mappedBy = "userAccount", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     List<UserRole> roles;
 
-    private String refreshToken;
+//    private String refreshToken;
 
     public UserAccount(){
         this.registrationTime = LocalDateTime.now();

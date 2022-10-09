@@ -127,7 +127,7 @@ public class LoginControllerIT {
                         MockMvcRequestBuilders.get("/admin").contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", "Bearer " + map.get("easyValuationToken")))
                 .andExpect(status().is(200)).andExpect(content().string("Admin panel"));
-    }
+        }
 
     @Test
     public void improperLoginShouldReturn404Response() throws Exception {
@@ -143,58 +143,58 @@ public class LoginControllerIT {
 
     }
 
-//    @TestFactory
-//    Collection<DynamicTest> endpointsLoginRegistrationH2ConsoleShouldBeAvailableWithoutToken(){
-//        List<String> endpoints = Arrays.asList("/login", "/user-accounts/register", "/h2-console");
-//
-//        Collection<DynamicTest> dynamicTests = new ArrayList<>();
-//
-//        for(int i = 0; i < endpoints.size(); i++){
-//            String endpoint = endpoints.get(i);
-//            Executable executable = new Executable() {
-//                @Override
-//                public void execute() throws Throwable {
-//
-//                }
-//            };
-//            ResponseEntity<String> response;
-//            HttpStatus responseStatusCode;
-//
-//            switch (endpoint){
-//                case "/login":
-//                    response = this.testRestTemplate.exchange("http://localhost:" + port + endpoint, HttpMethod.POST, new HttpEntity<>(user), String.class);
-//                    responseStatusCode = response.getStatusCode();
-//
-//                    executable = () -> {
-//                        assertThat(responseStatusCode, equalTo(HttpStatus.OK));
-//                    };
-//                    break;
-//
-//                case "/user-accounts/register":
-//                    response = this.testRestTemplate.exchange("http://localhost:" + port + endpoint, HttpMethod.POST, new HttpEntity<>(user), String.class);
-//                    responseStatusCode = response.getStatusCode();
-//
-//                    executable = () -> {
-//                        assertThat(response.getStatusCode(), equalTo(HttpStatus.CONFLICT));
-//                        assertThat(response.getHeaders().get("Warning").get(0), equalTo("Login or email already in use"));
-//                    };
-//                    break;
-//
-//                    case "/h2-console":
-//                        response = this.testRestTemplate.exchange("http://localhost:" + port + endpoint, HttpMethod.GET, new HttpEntity<>(user), String.class);
-//                        responseStatusCode = response.getStatusCode();
-//
-//                        executable = () -> {
-//                            assertThat(responseStatusCode, equalTo(HttpStatus.OK));
-//                        };
-//                        break;
-//            }
-//
-//            String name = "Test case: " + endpoint;
-//            DynamicTest dynamicTest = DynamicTest.dynamicTest(name, executable);
-//            dynamicTests.add(dynamicTest);
-//        }
-//        return dynamicTests;
-//    }
+    @TestFactory
+    Collection<DynamicTest> endpointsLoginRegistrationH2ConsoleShouldBeAvailableWithoutToken(){
+        List<String> endpoints = Arrays.asList("/login", "/user-accounts/register", "/h2-console");
+
+        Collection<DynamicTest> dynamicTests = new ArrayList<>();
+
+        for(int i = 0; i < endpoints.size(); i++){
+            String endpoint = endpoints.get(i);
+            Executable executable = new Executable() {
+                @Override
+                public void execute() throws Throwable {
+
+                }
+            };
+            ResponseEntity<String> response;
+            HttpStatus responseStatusCode;
+
+            switch (endpoint){
+                case "/login":
+                    response = this.testRestTemplate.exchange("http://localhost:" + port + endpoint, HttpMethod.POST, new HttpEntity<>(user), String.class);
+                    responseStatusCode = response.getStatusCode();
+
+                    executable = () -> {
+                        assertThat(responseStatusCode, equalTo(HttpStatus.OK));
+                    };
+                    break;
+
+                case "/user-accounts/register":
+                    response = this.testRestTemplate.exchange("http://localhost:" + port + endpoint, HttpMethod.POST, new HttpEntity<>(user), String.class);
+                    responseStatusCode = response.getStatusCode();
+
+                    executable = () -> {
+                        assertThat(response.getStatusCode(), equalTo(HttpStatus.CONFLICT));
+                        assertThat(response.getHeaders().get("Warning").get(0), equalTo("Login or email already in use"));
+                    };
+                    break;
+
+                    case "/h2-console":
+                        response = this.testRestTemplate.exchange("http://localhost:" + port + endpoint, HttpMethod.GET, new HttpEntity<>(user), String.class);
+                        responseStatusCode = response.getStatusCode();
+
+                        executable = () -> {
+                            assertThat(responseStatusCode, equalTo(HttpStatus.OK));
+                        };
+                        break;
+            }
+
+            String name = "Test case: " + endpoint;
+            DynamicTest dynamicTest = DynamicTest.dynamicTest(name, executable);
+            dynamicTests.add(dynamicTest);
+        }
+        return dynamicTests;
+    }
 
 }

@@ -32,7 +32,7 @@ public class JwtFilter extends BasicAuthenticationFilter {
 
         String header = httpServletRequest.getHeader("Authorization");
         String endpoint = httpServletRequest.getServletPath();
-        if( !endpoint.endsWith("/login") && !endpoint.endsWith("/register") && !endpoint.endsWith("/h2-console")){
+        if( !(endpoint.endsWith("/login") || endpoint.endsWith("/register") || endpoint.endsWith("/refreshtoken") || endpoint.endsWith("/h2-console"))){
             try {
                 UsernamePasswordAuthenticationToken authResult =
                         tokenProvider.getAuthenticationByToken(header);

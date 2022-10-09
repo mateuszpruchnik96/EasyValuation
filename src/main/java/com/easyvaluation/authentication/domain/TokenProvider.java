@@ -6,6 +6,10 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
+
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
@@ -31,6 +36,24 @@ public class TokenProvider {
                 .setExpiration(new Date(currentTimeMillis +(15*60*1000))) //15 minutes
                 .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.encode(SecretKeyConfig.getSECRET_KEY()))
                 .compact();
+    }
+
+    public String createTokenUsingRefreshToken(String refreshToken){
+        String[] chunks = refreshToken.split("\\.");
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+
+        String header = new String(decoder.decode(chunks[0]));
+        try {
+            JSONObject jsonObject = new JSONObject("{\"phonetype\":\"N95\",\"cat\":\"WP\"}");
+        }catch (JSONException err){
+            System.out.println("Error"+ err.toString());
+        }
+
+        String payload = new String(decoder.decode(chunks[1]));
+
+        long currentTimeMillis = System.currentTimeMillis();
+
+        return header + payload;
     }
 
     public String createRefreshToken(UserAccount userAccount){
@@ -64,4 +87,20 @@ public class TokenProvider {
                 = new UsernamePasswordAuthenticationToken(username, null, simpleGrantedAuthorities);
         return usernamePasswordAuthenticationToken;
     }
+
+//    public UsernamePasswordAuthenticationToken getAuthenticationByRefreshToken(String header) {
+//
+//        Jws<Claims> claimsJws = Jwts.parser()
+//                .setSigningKey(TextCodec.BASE64.encode(SecretKeyConfig.getSECRET_KEY()))
+//                .parseClaimsJws(header.replace("Bearer ", ""));
+//
+//        String username = claimsJws.getBody().get("name").toString();
+//        String role = claimsJws.getBody().get("role").toString();
+//
+//        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = Collections.singleton(new SimpleGrantedAuthority(role));
+//
+//       UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
+//                = new UsernamePasswordAuthenticationToken(username, null, simpleGrantedAuthorities);
+//        return usernamePasswordAuthenticationToken;
+//    }
 }
