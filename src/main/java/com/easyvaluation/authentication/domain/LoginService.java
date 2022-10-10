@@ -37,8 +37,7 @@ public class LoginService{
         if(isExist == true){
             try {
                 userAccount = userAccountService.findByLogin(userAccount);
-                System.out.println(userAccount.getId());
-            } catch (EntityNotFoundException | NoSuchFieldException e) {
+            } catch (EntityNotFoundException e) {
                 throw new EntityNotFoundException("Thrown in finding entity by login");
             }
             return "{\"easyValuationToken\": \"" + tokenProvider.createToken(userAccount) + "\", " +
@@ -54,7 +53,7 @@ public class LoginService{
                 userAccount = userAccountService.findByLogin(userAccount);
                 return "{\"easyValuationToken\": \"" + tokenProvider.createToken(userAccount) + "\", " +
                         "\"easyValuationRefreshToken\": \"" + refreshTokenService.createRefreshToken(userAccount).getToken() + "\"}";
-            } catch (EntityNotFoundException | NoSuchFieldException e) {
+            } catch (EntityNotFoundException e) {
                 throw new EntityNotFoundException("Thrown in finding entity by login in refreshLogin method");
             }
 

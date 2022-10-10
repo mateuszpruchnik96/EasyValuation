@@ -3,6 +3,7 @@ package com.easyvaluation.authentication.domain.refreshToken;
 import com.easyvaluation.authentication.domain.SecretKeyConfig;
 import com.easyvaluation.security.domain.UserAccount;
 import com.easyvaluation.security.domain.UserAccountRepository;
+import com.easyvaluation.security.domain.UserAccountService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,15 @@ public class RefreshTokenService {
 
     private Long refreshTokenDurationMs =  Long.valueOf(2*60*60*1000);
 
-    @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
+    private UserAccountService userAccountService;
+
     @Autowired
-    private UserAccountRepository userAccountRepository;
+    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, UserAccountService userAccountService){
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.userAccountService = userAccountService;
+    }
 
     public RefreshToken findByToken(String token) {
         Optional<RefreshToken>refreshToken = refreshTokenRepository.findByToken(token);
@@ -36,11 +41,11 @@ public class RefreshTokenService {
     public RefreshToken createRefreshToken(UserAccount userAccount) {
         RefreshToken refreshToken = new RefreshToken();
 
-        refreshToken.setUserAccount(userAccountRepository.findById(userAccount.getId()).get());
+        refreshToken.setUserAccount(userAccountService.findById(userAccount.getId()));
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
         refreshToken.setToken(UUID.randomUUID().toString());
 
-        refreshToken = refreshTokenRepository.save(refreshToken);
+        refreshTokenRepository.save(refreshToken);
         System.out.println(refreshToken);
         return refreshToken;
     }
@@ -53,10 +58,8 @@ public class RefreshTokenService {
         return token;
     }
 
-
-
     @Transactional
     public int deleteByUserAccountId(Long userId) {
-        return refreshTokenRepository.deleteByUserAccount(userAccountRepository.findById(userId).get());
+        return refreshTokenRepository.deleteByUserAccount(userAccountService.findById(userId));
     }
 }

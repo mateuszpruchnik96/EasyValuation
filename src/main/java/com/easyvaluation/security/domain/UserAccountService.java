@@ -26,7 +26,7 @@ public class UserAccountService implements AbstractService<UserAccount> {
             return entity;
     }
 
-    public UserAccount findByLogin(UserAccount entity) throws NoSuchFieldException {
+    public UserAccount findByLogin(UserAccount entity) throws EntityNotFoundException {
         try{
             UserAccount userAccount = userAccountRepository.findByLogin(entity.getLogin());
             return userAccount;

@@ -145,7 +145,7 @@ public class LoginControllerIT {
 
     @TestFactory
     Collection<DynamicTest> endpointsLoginRegistrationH2ConsoleShouldBeAvailableWithoutToken(){
-        List<String> endpoints = Arrays.asList("/login", "/user-accounts/register", "/h2-console");
+        List<String> endpoints = Arrays.asList("/login","/refreshtoken", "/user-accounts/register", "/h2-console");
 
         Collection<DynamicTest> dynamicTests = new ArrayList<>();
 
