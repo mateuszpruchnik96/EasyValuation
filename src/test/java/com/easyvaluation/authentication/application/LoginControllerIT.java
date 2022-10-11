@@ -1,8 +1,12 @@
 package com.easyvaluation.authentication.application;
 
 import com.easyvaluation.authentication.domain.LoginService;
+import com.easyvaluation.authentication.domain.refreshToken.RefreshToken;
+import com.easyvaluation.authentication.domain.refreshToken.RefreshTokenRepository;
+import com.easyvaluation.authentication.domain.refreshToken.RefreshTokenService;
 import com.easyvaluation.security.domain.UserAccount;
 import com.easyvaluation.security.domain.UserType;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,6 +44,12 @@ public class LoginControllerIT {
     @Autowired
     TestRestTemplate testRestTemplate;
 
+    @Autowired
+    RefreshTokenService refreshTokenService;
+
+    @Autowired
+    RefreshTokenRepository refreshTokenRepository;
+
     @LocalServerPort
     private int port;
 
@@ -49,6 +59,7 @@ public class LoginControllerIT {
     @BeforeEach
     void beforeEach(){
         user = new UserAccount("jan", "lokiloki");
+        user.setId(1L);
         url = "http://localhost:" + port + "/login";
     }
 
@@ -72,6 +83,8 @@ public class LoginControllerIT {
         //then
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
         assertThat(map.get("easyValuationToken"), instanceOf(String.class));
+        assertThat(map.get("easyValuationRefreshToken"), instanceOf(String.class));
+
 
     }
 
@@ -88,9 +101,9 @@ public class LoginControllerIT {
 
         //then
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/materials/items/1").contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + map.get("easyValuationToken")))
-                    .andExpect(status().isOk()).andExpect(content().json("{\"id\":1,\"version\":0,\"itemName\":\"srubass\",\"producer\":\"elesa\",\"symbol\":\"12543\",\"mass\":1.0}"));
+                        MockMvcRequestBuilders.get("/materials/items/1").contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer " + map.get("easyValuationToken")))
+                .andExpect(status().isOk()).andExpect(content().json("{\"id\":1,\"version\":0,\"itemName\":\"srubass\",\"producer\":\"elesa\",\"symbol\":\"12543\",\"mass\":1.0}"));
         assertThat(result, containsString("Token"));
     }
 
@@ -143,8 +156,33 @@ public class LoginControllerIT {
 
     }
 
+    @Test
+    void requestToRefreshEndpointWithValidRefreshTokenShouldReturnNewValidJwtAndRefreshToken() throws Exception {
+        //given
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+        System.out.println(refreshToken);
+        RefreshToken tokenFromDb = refreshTokenService.findByToken(refreshToken.getToken());
+        System.out.println(tokenFromDb);
+
+        //when
+        String result = this.testRestTemplate.postForObject("http://localhost:" + port + "/refreshtoken", refreshToken.getToken(), String.class);
+
+        ObjectMapper mapper = new ObjectMapper();
+        Map map = mapper.readValue(result, Map.class);
+
+        //then
+        //RESULT ZAWIERA POPRZEDNI TOKEN - DO POPRAWY
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/refreshtoken")
+                                .content(refreshTokenRepository.findByUserAccount(user).getToken())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer " + map.get("easyValuationToken")))
+                                .andExpect(status().is(200))
+                                .andExpect(content().string("{\"easyValuationToken\": \"" + map.get("easyValuationToken") + "\", \"easyValuationRefreshToken\": \"" + map.get("easyValuationRefreshToken") + "\"}"));
+    }
+
     @TestFactory
-    Collection<DynamicTest> endpointsLoginRegistrationH2ConsoleShouldBeAvailableWithoutToken(){
+    Collection<DynamicTest> endpointsLoginRefreshRegistrationH2ConsoleShouldBeAvailableWithoutToken(){
         List<String> endpoints = Arrays.asList("/login","/refreshtoken", "/user-accounts/register", "/h2-console");
 
         Collection<DynamicTest> dynamicTests = new ArrayList<>();

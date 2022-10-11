@@ -45,6 +45,8 @@ public class RefreshTokenService {
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
         refreshToken.setToken(UUID.randomUUID().toString());
 
+        refreshTokenRepository.deleteByUserAccount(userAccount);
+
         refreshTokenRepository.save(refreshToken);
         System.out.println(refreshToken);
         return refreshToken;

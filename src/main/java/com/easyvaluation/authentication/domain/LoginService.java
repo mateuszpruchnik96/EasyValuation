@@ -61,12 +61,16 @@ public class LoginService{
 
     //Generating tokens for refresh request
     public String generateNewTokensAfterRefresh(String refreshTokenString) throws EntityNotFoundException {
-        RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenString);
-        UserAccount userAccount = userAccountService.findById(refreshToken.getUserAccount().getId());
+        try {
+            RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenString);
+            UserAccount userAccount = userAccountService.findById(refreshToken.getUserAccount().getId());
+            String newTokens = refreshLogin(userAccount);
 
-        String newTokens = refreshLogin(userAccount);
+            return newTokens;
 
-        return newTokens;
+        } catch(NullPointerException e){
+            throw new EntityNotFoundException("There is no user with that refresh token");
+        }
     }
 
     public String generateFingerprint(){
