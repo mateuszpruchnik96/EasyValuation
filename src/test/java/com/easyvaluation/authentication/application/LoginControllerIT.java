@@ -19,6 +19,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.*;
@@ -121,7 +122,7 @@ public class LoginControllerIT {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/admin").contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + map.get("easyValuationToken")))
-                    .andExpect(status().is(403));
+                        .andExpect(status().is(403));
     }
 
     @Test
@@ -137,9 +138,10 @@ public class LoginControllerIT {
 
         //then
         mockMvc.perform(
-                        MockMvcRequestBuilders.get("/admin").contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", "Bearer " + map.get("easyValuationToken")))
-                .andExpect(status().is(200)).andExpect(content().string("Admin panel"));
+                MockMvcRequestBuilders.get("/admin").contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + map.get("easyValuationToken")))
+                        .andExpect(status().is(200))
+                        .andExpect(content().string("Admin panel"));
         }
 
     @Test
@@ -160,9 +162,6 @@ public class LoginControllerIT {
     void requestToRefreshEndpointWithValidRefreshTokenShouldReturnNewValidJwtAndRefreshToken() throws Exception {
         //given
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
-        System.out.println(refreshToken);
-        RefreshToken tokenFromDb = refreshTokenService.findByToken(refreshToken.getToken());
-        System.out.println(tokenFromDb);
 
         //when
         String result = this.testRestTemplate.postForObject("http://localhost:" + port + "/refreshtoken", refreshToken.getToken(), String.class);
@@ -171,14 +170,16 @@ public class LoginControllerIT {
         Map map = mapper.readValue(result, Map.class);
 
         //then
-        //RESULT ZAWIERA POPRZEDNI TOKEN - DO POPRAWY
-        mockMvc.perform(
+        MvcResult resultMvc = mockMvc.perform(
                         MockMvcRequestBuilders.post("/refreshtoken")
                                 .content(refreshTokenRepository.findByUserAccount(user).getToken())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", "Bearer " + map.get("easyValuationToken")))
                                 .andExpect(status().is(200))
-                                .andExpect(content().string("{\"easyValuationToken\": \"" + map.get("easyValuationToken") + "\", \"easyValuationRefreshToken\": \"" + map.get("easyValuationRefreshToken") + "\"}"));
+                                .andReturn();
+
+        String content = resultMvc.getResponse().getContentAsString();
+        assertThat(content, is("{\"easyValuationToken\": \"" + map.get("easyValuationToken") + "\", \"easyValuationRefreshToken\": \"" + refreshTokenRepository.findByUserAccount(user).getToken() + "\"}"));
     }
 
     @TestFactory

@@ -25,7 +25,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .hasRole("USER")
                 .antMatchers("/admin")
                 .hasRole("ADMIN")
-                .antMatchers("/login").permitAll()
+                .antMatchers("/login", "/register", "/refreshtoken")
+                .permitAll()
                 .and()
                 .addFilter(new JwtFilter(authenticationManager()));
         http.cors().and().csrf().disable();

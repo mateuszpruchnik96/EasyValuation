@@ -45,7 +45,7 @@ public class LoginController {
 
             return new ResponseEntity<>(newTokens, HttpStatus.OK);
         } catch (EntityNotFoundException exception) {
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
