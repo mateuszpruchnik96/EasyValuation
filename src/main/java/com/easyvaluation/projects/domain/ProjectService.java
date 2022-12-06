@@ -1,11 +1,13 @@
 package com.easyvaluation.projects.domain;
 
+import com.easyvaluation.authentication.domain.TokenProvider;
 import com.easyvaluation.foundations.domain.AbstractService;
 import com.easyvaluation.security.domain.UserAccount;
 import com.easyvaluation.security.domain.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -16,6 +18,9 @@ public class ProjectService implements AbstractService<Project> {
 
     @Autowired
     UserAccountRepository userAccountRepository;
+
+    @Autowired
+    TokenProvider tokenProvider;
 
     @Override
     public Project save(Project entity) {
@@ -29,6 +34,15 @@ public class ProjectService implements AbstractService<Project> {
     public List<Project> findProjectsByUserId(Long userAccountId){
         List<Project> userProjects = projectRepository.findByUserAccountId(userAccountId);
         return userProjects;
+    }
+
+    public Project findProjectByUserIdAndProjectId( Long projectId, String token){
+        String jwt = token.substring(7);
+
+        Long userAccountId = tokenProvider.userIdDecoder(jwt);
+
+        Project userProject = projectRepository.findByUserAccountIdAndId(userAccountId, projectId);
+        return userProject;
     }
 
 }

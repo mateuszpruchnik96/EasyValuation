@@ -1,17 +1,12 @@
 package com.easyvaluation.projects.application;
 
-import com.easyvaluation.materialslibrary.domain.SinglePart;
-import com.easyvaluation.projects.domain.HashMapConverter;
 import com.easyvaluation.projects.domain.Project;
 import com.easyvaluation.projects.domain.ProjectRepository;
 import com.easyvaluation.projects.domain.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.Convert;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +31,16 @@ public class ProjectController {
     @GetMapping("/projects")
     public ResponseEntity<List<Project>> getAllByUserId(@RequestParam(value="userAccountId") Long userAccountId){
         Optional<List<Project>> service = Optional.ofNullable(projectService.findProjectsByUserId(userAccountId));
+        if (service.isPresent()){
+            return ResponseEntity.ok(service.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/projects/project")
+    public ResponseEntity<Project> getOneByUserId(@RequestHeader("Authorization") String token, @RequestParam(value="projectId") String projectId){
+        Optional<Project> service = Optional.ofNullable(projectService.findProjectByUserIdAndProjectId( Long.valueOf(projectId), token));
         if (service.isPresent()){
             return ResponseEntity.ok(service.get());
         } else {

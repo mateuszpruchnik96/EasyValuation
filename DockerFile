@@ -1,0 +1,4 @@
+FROM openjdk:20-ea-jdk-slim-bullseye
+ADD target/easyvaluation-0.0.1-SNAPSHOT.jar .
+EXPOSE 8080
+CMD java -jar easyvaluation-0.0.1-SNAPSHOT.jar

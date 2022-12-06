@@ -12,13 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collections;
 
 @SpringBootApplication
-@RestController
-public class EasyValuationApplication extends SpringBootServletInitializer {
+//@RestController
+public class EasyValuationApplication extends SpringBootServletInitializer
+{
 
-	@GetMapping("/test")
-	public String test(){
-		return "Application deployed!";
-	}
+//	@GetMapping("/test")
+//	public String test(){
+//		return "Application deployed!";
+//	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(EasyValuationApplication.class, args);
