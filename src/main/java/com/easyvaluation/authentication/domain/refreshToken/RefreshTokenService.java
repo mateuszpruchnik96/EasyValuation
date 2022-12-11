@@ -1,6 +1,5 @@
 package com.easyvaluation.authentication.domain.refreshToken;
 
-import com.easyvaluation.authentication.domain.SecretKeyConfig;
 import com.easyvaluation.security.domain.UserAccount;
 import com.easyvaluation.security.domain.UserAccountRepository;
 import com.easyvaluation.security.domain.UserAccountService;

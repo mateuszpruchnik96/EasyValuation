@@ -81,4 +81,15 @@ class LoginServiceTest {
         assertThrows(EntityNotFoundException.class, ()->loginService.login(userAccount));
     }
 
+    @Test
+    void loginMethodShouldThrowAnErrorWhenFindByLoginThrowsEntityNotFoundException() {
+        //given
+        given(userAccountService.isExist(userAccount)).willReturn(new AbstractMap.SimpleEntry(true, ""));
+        given(userAccountService.findByLogin(userAccount)).willThrow(EntityNotFoundException.class);
+
+        //when
+        //then
+        assertThrows(EntityNotFoundException.class, ()->loginService.login(userAccount));
+    }
+
 }

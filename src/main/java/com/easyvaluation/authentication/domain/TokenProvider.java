@@ -1,7 +1,7 @@
 package com.easyvaluation.authentication.domain;
 
 import com.easyvaluation.security.domain.UserAccount;
-import com.fasterxml.jackson.core.JsonParser;
+import com.easyvaluation.security.domain.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -15,24 +15,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class TokenProvider {
-
 
     public String createToken(UserAccount userAccount){
         long currentTimeMillis = System.currentTimeMillis();
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
-                .claim("name",userAccount.getLogin())
-                .claim("role","ROLE_" + userAccount.getUserType())
+                .claim("name", userAccount.getLogin())
+                .claim("role", this.roleParser(userAccount))
                 .claim("userId", userAccount.getId())
                 .setIssuedAt(new Date(currentTimeMillis))
                 .setExpiration(new Date(currentTimeMillis +(15*60*1000))) //15 minutes
@@ -82,8 +75,15 @@ public class TokenProvider {
 //        LocalDateTime now = LocalDateTime.now();
 //        Boolean isExpired = now.isAfter(expiration);
 
+        String[] roles = role.split(", ");
+        List<SimpleGrantedAuthority> roleArrayList = new ArrayList<SimpleGrantedAuthority>();
+        for(String roleString : roles)
+            roleArrayList.add(new SimpleGrantedAuthority(roleString));
+        Set<SimpleGrantedAuthority> set = new HashSet<SimpleGrantedAuthority>(roleArrayList);
 
-        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = Collections.singleton(new SimpleGrantedAuthority(role));
+        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = Collections.synchronizedSet(set);
+
+//                Collections.singleton(new SimpleGrantedAuthority(role));
 
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                 = new UsernamePasswordAuthenticationToken(username, null, simpleGrantedAuthorities);
@@ -110,6 +110,15 @@ public class TokenProvider {
                 throw new JSONException(e);
             }
         }
+    }
+
+    private String roleParser(UserAccount userAccount){
+        String roles = "";
+        Collection<UserRole> userRoles = userAccount.getUserRoles();
+        for(UserRole userRole : userRoles){
+            roles = roles + userRole.getName() + ", ";
+        }
+        return roles;
     }
 
 //    public UsernamePasswordAuthenticationToken getAuthenticationByRefreshToken(String header) {

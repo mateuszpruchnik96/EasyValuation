@@ -36,6 +36,7 @@ public class LoginService{
         System.out.println(isExist);
         if(isExist == true){
             try {
+                // taking entity with complete data
                 userAccount = userAccountService.findByLogin(userAccount);
             } catch (EntityNotFoundException e) {
                 throw new EntityNotFoundException("Thrown in finding entity by login");

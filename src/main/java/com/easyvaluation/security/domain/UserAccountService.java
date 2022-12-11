@@ -1,5 +1,6 @@
 package com.easyvaluation.security.domain;
 
+
 import com.easyvaluation.foundations.domain.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,12 +16,17 @@ public class UserAccountService implements AbstractService<UserAccount> {
     @Autowired
     UserAccountRepository userAccountRepository;
 
+    @Autowired
+    UserRoleRepository userRoleRepository;
+
     BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(16);
 
     @Override
     public UserAccount save(UserAccount entity){
 
             entity.setPassword(bCryptPasswordEncoder.encode(entity.getPassword()));
+            UserRole userRole = userRoleRepository.findByName("ROLE_USER");
+            entity.setUserRoles(userRole);
             entity = userAccountRepository.save(entity);
 
             return entity;
@@ -51,7 +57,6 @@ public class UserAccountService implements AbstractService<UserAccount> {
             } else {
                 return new AbstractMap.SimpleEntry(false, "Wrong login or password");
             }
-
         } catch(NullPointerException e){
             return new AbstractMap.SimpleEntry(false, "Wrong log or pass");
         }

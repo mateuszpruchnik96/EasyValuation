@@ -40,7 +40,7 @@ public class ProjectController {
 
     @GetMapping("/projects/project")
     public ResponseEntity<Project> getOneByUserId(@RequestHeader("Authorization") String token, @RequestParam(value="projectId") String projectId){
-        Optional<Project> service = Optional.ofNullable(projectService.findProjectByUserIdAndProjectId( Long.valueOf(projectId), token));
+        Optional<Project> service = projectService.findProjectByUserIdAndProjectId( Long.valueOf(projectId), token);
         if (service.isPresent()){
             return ResponseEntity.ok(service.get());
         } else {

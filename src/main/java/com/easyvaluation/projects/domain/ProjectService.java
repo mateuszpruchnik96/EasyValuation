@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProjectService implements AbstractService<Project> {
@@ -36,12 +37,12 @@ public class ProjectService implements AbstractService<Project> {
         return userProjects;
     }
 
-    public Project findProjectByUserIdAndProjectId( Long projectId, String token){
+    public Optional<Project> findProjectByUserIdAndProjectId(Long projectId, String token){
         String jwt = token.substring(7);
 
         Long userAccountId = tokenProvider.userIdDecoder(jwt);
 
-        Project userProject = projectRepository.findByUserAccountIdAndId(userAccountId, projectId);
+        Optional<Project> userProject = Optional.ofNullable(projectRepository.findByUserAccountIdAndId(userAccountId, projectId));
         return userProject;
     }
 

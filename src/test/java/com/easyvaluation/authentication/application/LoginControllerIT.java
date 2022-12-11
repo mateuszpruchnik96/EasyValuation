@@ -5,11 +5,10 @@ import com.easyvaluation.authentication.domain.refreshToken.RefreshToken;
 import com.easyvaluation.authentication.domain.refreshToken.RefreshTokenRepository;
 import com.easyvaluation.authentication.domain.refreshToken.RefreshTokenService;
 import com.easyvaluation.security.domain.UserAccount;
-import com.easyvaluation.security.domain.UserType;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.easyvaluation.security.domain.UserRole;
+import com.easyvaluation.security.domain.UserRoleRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -31,9 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 //@Sql(statements = "select * from user_account")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ExtendWith(SpringExtension.class)
+//@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
-//@WebMvcTest(LoginController.class)
 public class LoginControllerIT {
 
     @Autowired
@@ -50,6 +47,9 @@ public class LoginControllerIT {
 
     @Autowired
     RefreshTokenRepository refreshTokenRepository;
+
+    @Autowired
+    UserRoleRepository userRoleRepository;
 
     @LocalServerPort
     private int port;
@@ -94,7 +94,7 @@ public class LoginControllerIT {
         //given
 
         //when
-        String result = this.testRestTemplate.postForObject(url, user,
+        String result = this.testRestTemplate.postForObject(url, new HttpEntity<>(user),
                 String.class);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -128,13 +128,16 @@ public class LoginControllerIT {
     @Test
     public void properAdminLoginShouldReturnResponseWithValidTokenForAdminAvailableEndpoint() throws Exception {
         //given
-        user.setUserType(UserType.ADMIN);
+        UserRole userRole = new UserRole();
+        user.setUserRoles(userRoleRepository.findByName("ROLE_ADMIN"));
 
         //when
         String result = this.testRestTemplate.postForObject(url, user, String.class);
 
         ObjectMapper mapper = new ObjectMapper();
         Map map = mapper.readValue(result, Map.class);
+
+        System.out.println(map.get("easyValuationToken"));
 
         //then
         mockMvc.perform(

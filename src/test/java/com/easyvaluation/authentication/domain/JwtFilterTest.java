@@ -1,6 +1,7 @@
 package com.easyvaluation.authentication.domain;
 
 import com.easyvaluation.security.domain.UserAccount;
+import com.easyvaluation.security.domain.UserRole;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,8 @@ class JwtFilterTest {
     // Now expired
     String jwtTokenExpired = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiamFuIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTY1OTMzNTYxMCwiZXhwIjoxNjU5MzM1NjExfQ.H53aOUQqNrSOYFtkgnTPJGmzyqkeyhlq90jjikZtpaqAjSdd7yPYmjlnPBlw2K54njjrFmWGGp5DJ6TRheB5IQ";
 
-    UserAccount user = new UserAccount("jan", "lokiloki");
+    UserRole userRole = new UserRole("ROLE_USER");
+    UserAccount user = new UserAccount("jan", "lokiloki", userRole);
 
     //    @Autowired
     SecurityConfig securityConfig = new SecurityConfig();
