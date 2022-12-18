@@ -1,11 +1,14 @@
 package com.easyvaluation.security.domain;
 
 import com.easyvaluation.authentication.domain.refreshToken.RefreshToken;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 
 public interface UserAccountRepository extends JpaRepository<UserAccount, Long> {
@@ -15,6 +18,9 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long> 
 
     @Query(value = "select c from UserAccount c where c.login = :login")
     UserAccount findByLogin(@Param("login") String login);
+
+    @EntityGraph(attributePaths="userRoles")
+    Optional<UserAccount> findUserAccountWithUserRolesById(Long userAccountId);
 
 //    @Transactional
 //    @Modifying

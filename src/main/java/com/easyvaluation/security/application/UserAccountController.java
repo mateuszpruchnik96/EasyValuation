@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @RestController
@@ -51,5 +53,22 @@ public class UserAccountController {
         }
     }
 
+    @PostMapping("/user-accounts/add-role")
+    public ResponseEntity<UserAccount> addUserRole(@RequestParam(name = "id") Long userAccountId, @RequestParam(name = "role") String userRoleName){
+        UserAccount userAccount = null;
+        try {
+            userAccount = userAccountService.addUserAccountRoles(userAccountId, userRoleName);
+            return ResponseEntity.ok(userAccount);
+        } catch (EntityNotFoundException e){
+            HttpHeaders responseHeaders = new HttpHeaders();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .headers(responseHeaders).body(userAccount);
+        } catch (EntityExistsException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(userAccount);
+        }
+    }
+}
 
-};
+
+

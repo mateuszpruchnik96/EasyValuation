@@ -11,9 +11,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Getter
 @Setter
@@ -48,15 +46,16 @@ public class UserAccount extends BaseEntity {
             joinColumns = @JoinColumn(
                     name = "user_account_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(
-                    name = "user_role_id", referencedColumnName = "id"))
-    Collection<UserRole> userRoles;
+                    name = "user_role_id", referencedColumnName = "id"),
+            uniqueConstraints = @UniqueConstraint(columnNames ={"user_account_id", "user_role_id"}))
+    Set<UserRole> userRoles;
 
 //    private String refreshToken;
 
     public UserAccount(){
         this.registrationTime = LocalDateTime.now();
 //        UserRole adminRole = userRoleRepository.findByName("ROLE_ADMIN");
-        this.userRoles = new ArrayList<>();
+        this.userRoles = new HashSet<>();
 //        this.userType = UserType.USER;
     }
 
@@ -64,7 +63,7 @@ public class UserAccount extends BaseEntity {
         this.login = login;
         this.password = password;
         this.registrationTime = LocalDateTime.now();
-        this.userRoles = new ArrayList<>();
+        this.userRoles = new HashSet<>();
 //        this.userType = UserType.USER;
     }
 
@@ -72,7 +71,7 @@ public class UserAccount extends BaseEntity {
         this.login = login;
         this.password = password;
         this.registrationTime = LocalDateTime.now();
-        this.userRoles = new ArrayList<>();
+        this.userRoles = new HashSet<>();
         this.userRoles.add(userRole);
     }
 
@@ -80,5 +79,15 @@ public class UserAccount extends BaseEntity {
         for(UserRole userRole : userRoles){
             this.userRoles.add(userRole);
         }
+    }
+
+    public void addRole(UserRole userRole) {
+        this.userRoles.add(userRole);
+        userRole.getUserAccounts().add(this);
+    }
+
+    public void removeRole(UserRole userRole) {
+        this.userRoles.remove(userRole);
+        userRole.getUserAccounts().remove(this);
     }
 }

@@ -61,6 +61,7 @@ public class LoginControllerIT {
     void beforeEach(){
         user = new UserAccount("jan", "lokiloki");
         user.setId(1L);
+        user.setUserRoles(userRoleRepository.findByName("ROLE_USER"));
         url = "http://localhost:" + port + "/login";
     }
 

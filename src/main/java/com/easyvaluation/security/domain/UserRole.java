@@ -9,6 +9,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Data
@@ -21,11 +22,13 @@ public class UserRole extends BaseEntity {
 
     @ManyToMany(mappedBy = "userRoles")
     @JsonIgnore
-    private Collection<UserAccount> userAccount;
+    private Set<UserAccount> userAccounts;
 
     private Boolean active;
 
     public UserRole(String name){
         this.name = name;
     }
+
+
 }

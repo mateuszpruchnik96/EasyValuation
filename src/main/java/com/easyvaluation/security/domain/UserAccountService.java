@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.AbstractMap;
+import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -40,6 +42,7 @@ public class UserAccountService implements AbstractService<UserAccount> {
           throw new EntityNotFoundException();
         }
     }
+
     public UserAccount findById(Long id) throws EntityNotFoundException {
 
             Optional<UserAccount> userAccount = userAccountRepository.findById(id);
@@ -59,6 +62,24 @@ public class UserAccountService implements AbstractService<UserAccount> {
             }
         } catch(NullPointerException e){
             return new AbstractMap.SimpleEntry(false, "Wrong log or pass");
+        }
+    }
+
+    public UserAccount addUserAccountRoles(Long userAccountId, String userRoleName) throws EntityNotFoundException{
+        Optional<UserAccount> userAccount =
+                userAccountRepository.findUserAccountWithUserRolesById(userAccountId);
+        if(userAccount.isPresent()) {
+            UserAccount entity = userAccount.get();
+            entity.addRole(userRoleRepository.findByName(userRoleName));
+
+            for (UserRole userRole:entity.getUserRoles()) {
+                if(userRole.getName().equals(userRoleName)) throw new EntityExistsException("This user have that role!");
+            }
+
+            userAccountRepository.save(entity);
+            return entity;
+        } else {
+            throw new EntityNotFoundException("There is no user with that ID");
         }
     }
 
