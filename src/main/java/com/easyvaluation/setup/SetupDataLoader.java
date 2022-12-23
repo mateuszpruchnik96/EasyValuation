@@ -1,5 +1,8 @@
 package com.easyvaluation.setup;
 
+import com.easyvaluation.materialslibrary.domain.SinglePart;
+import com.easyvaluation.materialslibrary.domain.item.Item;
+import com.easyvaluation.materialslibrary.domain.item.ItemRepository;
 import com.easyvaluation.security.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -20,6 +23,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Autowired
     UserRoleRepository userRoleRepository;
+
+    @Autowired
+    ItemRepository itemRepository;
 
     @Override
     @Transactional
@@ -45,7 +51,14 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             userAccountService.save(admin);
         }
 
-        alreadySetup =true;
+        Item screw = new SinglePart("Elesa-Ganter", "G12543", 0.1F);
+        screw.setItemName("Screw");
+
+        itemRepository.save(screw);
+
+//\"id\":1,\"version\":0,\"itemName\":\"Screw\"," +
+//                "\"producer\":\"Elesa-Ganter\",\"symbol\":\"G12543\",\"mass\":0.1}"
+        alreadySetup = true;
     }
 
     @Transactional

@@ -46,7 +46,7 @@ public class UserAccountController {
                     .body(userAccount);
         }catch (Exception e){
             HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.add(HttpHeaders.WARNING, "Some error occured");
+            responseHeaders.add(HttpHeaders.WARNING, "Some error occured: " + e.getMessage());
             return ResponseEntity.internalServerError()
                     .headers(responseHeaders)
                     .body(userAccount);

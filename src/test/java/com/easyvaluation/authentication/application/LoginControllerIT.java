@@ -60,6 +60,7 @@ public class LoginControllerIT {
     @BeforeEach
     void beforeEach(){
         user = new UserAccount("jan", "lokiloki");
+        user.setEmail("jan@wp.pl");
         user.setId(1L);
         user.setUserRoles(userRoleRepository.findByName("ROLE_USER"));
         url = "http://localhost:" + port + "/login";
@@ -105,7 +106,7 @@ public class LoginControllerIT {
         mockMvc.perform(
                         MockMvcRequestBuilders.get("/materials/items/1").contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", "Bearer " + map.get("easyValuationToken")))
-                .andExpect(status().isOk()).andExpect(content().json("{\"id\":1,\"version\":0,\"itemName\":\"srubass\",\"producer\":\"elesa\",\"symbol\":\"12543\",\"mass\":1.0}"));
+                .andExpect(status().isOk()).andExpect(content().json("{\"id\":1,\"version\":0,\"itemName\":\"Screw\",\"producer\":\"Elesa-Ganter\",\"symbol\":\"G12543\",\"mass\":0.1}"));
         assertThat(result, containsString("Token"));
     }
 
@@ -129,11 +130,12 @@ public class LoginControllerIT {
     @Test
     public void properAdminLoginShouldReturnResponseWithValidTokenForAdminAvailableEndpoint() throws Exception {
         //given
-        UserRole userRole = new UserRole();
-        user.setUserRoles(userRoleRepository.findByName("ROLE_ADMIN"));
+//        UserRole userRole = new UserRole();
+//        user.setUserRoles(userRoleRepository.findByName("ROLE_ADMIN"));
+        UserAccount admin = new UserAccount("admin", "admin");
 
         //when
-        String result = this.testRestTemplate.postForObject(url, user, String.class);
+        String result = this.testRestTemplate.postForObject(url, admin, String.class);
 
         ObjectMapper mapper = new ObjectMapper();
         Map map = mapper.readValue(result, Map.class);
@@ -188,7 +190,8 @@ public class LoginControllerIT {
 
     @TestFactory
     Collection<DynamicTest> endpointsLoginRefreshRegistrationH2ConsoleShouldBeAvailableWithoutToken(){
-        List<String> endpoints = Arrays.asList("/login","/refreshtoken", "/user-accounts/register", "/h2-console");
+        List<String> endpoints = Arrays.asList("/login","/refreshtoken", "/user-accounts/register");
+//        , "/h2-console"
 
         Collection<DynamicTest> dynamicTests = new ArrayList<>();
 
@@ -214,8 +217,9 @@ public class LoginControllerIT {
                     break;
 
                 case "/user-accounts/register":
+                   user.setId(0L);
                     response = this.testRestTemplate.exchange("http://localhost:" + port + endpoint, HttpMethod.POST, new HttpEntity<>(user), String.class);
-                    responseStatusCode = response.getStatusCode();
+                    System.out.println(response.getBody());
 
                     executable = () -> {
                         assertThat(response.getStatusCode(), equalTo(HttpStatus.CONFLICT));
@@ -223,14 +227,14 @@ public class LoginControllerIT {
                     };
                     break;
 
-                    case "/h2-console":
-                        response = this.testRestTemplate.exchange("http://localhost:" + port + endpoint, HttpMethod.GET, new HttpEntity<>(user), String.class);
-                        responseStatusCode = response.getStatusCode();
-
-                        executable = () -> {
-                            assertThat(responseStatusCode, equalTo(HttpStatus.OK));
-                        };
-                        break;
+//                case "/h2-console":
+//                    response = this.testRestTemplate.exchange("http://localhost:" + port + endpoint, HttpMethod.GET, new HttpEntity<>(user), String.class);
+//                    responseStatusCode = response.getStatusCode();
+//
+//                    executable = () -> {
+//                        assertThat(responseStatusCode, equalTo(HttpStatus.OK));
+//                    };
+//                    break;
             }
 
             String name = "Test case: " + endpoint;

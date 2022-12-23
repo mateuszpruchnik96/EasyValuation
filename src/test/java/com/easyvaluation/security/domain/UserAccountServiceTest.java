@@ -1,5 +1,7 @@
 package com.easyvaluation.security.domain;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,6 +11,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,16 +36,25 @@ class UserAccountServiceTest {
     @Mock
     UserRoleRepository userRoleRepository;
 
+    UserRole userRole;
+    UserRole userRoleToAdd;
+    UserAccount userAccount;
+    Set<UserAccount> userAccounts;
+
+    @BeforeEach
+    void beforeEach(){
+        userRole = new UserRole("ROLE_USER");
+        userRoleToAdd = new UserRole("ROLE_ADMIN");
+        userAccount = new UserAccount("jan", "lokiloki", userRole);
+        userAccounts = new HashSet<UserAccount>();
+        userAccounts.add(userAccount);
+        userRole.setUserAccounts(userAccounts);
+        userRoleToAdd.setUserAccounts(userAccounts);
+    }
+
     @Test
     void addUserAccountRolesShouldReturnAnEntityWithAddedRole(){
         //given
-
-        UserRole userRole = new UserRole("ROLE_USER");
-        UserRole userRoleToAdd = new UserRole("ROLE_ADMIN");
-        UserAccount userAccount = new UserAccount("jan", "lokiloki", userRole);
-        Set<UserAccount> userAccounts = new HashSet<UserAccount>();
-        userAccounts.add(userAccount);
-        userRoleToAdd.setUserAccounts(userAccounts);
 
         given(userRoleRepository.findByName("ROLE_ADMIN")).willReturn(userRoleToAdd);
         given(userAccountRepository.findUserAccountWithUserRolesById(1L)).willReturn(java.util.Optional.of(userAccount));
@@ -51,6 +64,29 @@ class UserAccountServiceTest {
 
         //then
         assertThat(entity.getUserRoles(), hasItem(userRoleToAdd));
+    }
+
+    @Test
+    void addUserAccountRolesShouldThrowEntityNotFoundExceptionWhenThereIsNoSuchUser(){
+        //given
+
+        given(userAccountRepository.findUserAccountWithUserRolesById(1L)).willReturn(java.util.Optional.empty());
+
+        //when
+        //then
+        assertThrows(EntityNotFoundException.class, () -> userAccountService.addUserAccountRoles(1L , "ROLE_ADMIN"));
+    }
+
+    @Test
+    void addUserAccountRolesShouldThrowEntityExistsExceptionWhenThereIsAnUserWithSpecificRole(){
+        //given
+
+        given(userAccountRepository.findUserAccountWithUserRolesById(1L)).willReturn(java.util.Optional.of(userAccount));
+        given(userRoleRepository.findByName("ROLE_USER")).willReturn(userRole);
+
+        //when
+        //then
+        assertThrows(EntityExistsException.class, () -> userAccountService.addUserAccountRoles(1L , "ROLE_USER"));
     }
 
 }
