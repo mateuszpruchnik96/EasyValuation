@@ -3,12 +3,19 @@ package com.easyvaluation.setup;
 import com.easyvaluation.materialslibrary.domain.SinglePart;
 import com.easyvaluation.materialslibrary.domain.item.Item;
 import com.easyvaluation.materialslibrary.domain.item.ItemRepository;
+import com.easyvaluation.projects.domain.Operation;
+import com.easyvaluation.projects.domain.Project;
+import com.easyvaluation.projects.domain.ProjectRepository;
 import com.easyvaluation.security.domain.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
@@ -26,6 +33,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Autowired
     ItemRepository itemRepository;
+
+    @Autowired
+    ProjectRepository projectRepository;
 
     @Override
     @Transactional
@@ -53,11 +63,35 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         Item screw = new SinglePart("Elesa-Ganter", "G12543", 0.1F);
         screw.setItemName("Screw");
+//        itemRepository.save(screw);
 
-        itemRepository.save(screw);
 
-//\"id\":1,\"version\":0,\"itemName\":\"Screw\"," +
-//                "\"producer\":\"Elesa-Ganter\",\"symbol\":\"G12543\",\"mass\":0.1}"
+        Item bolt = new SinglePart("Kipp", "XXXX", 0.12F);
+        bolt.setItemName("Bolt");
+//        itemRepository.save(bolt);
+
+        Operation operation1 = new Operation();
+        operation1.setDescription("Operation 1");
+        operation1.setHourPrice(100);
+        operation1.setHours(10);
+
+        Operation operation2 = new Operation();
+        operation2.setDescription("Operation 2");
+        operation2.setHourPrice(200);
+        operation2.setHours(20);
+
+        Project project = new Project();
+        project.setUserAccount(userAccountRepository.findByLogin(user.getLogin()));
+        try {
+            project.addItem(itemRepository.findByItemNameStartsWithIgnoreCase("Screw").get(0).getId(), 2);
+            project.addItem(itemRepository.findByItemNameStartsWithIgnoreCase("Bolt").get(0).getId(), 10);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        project.addOperation(operation1);
+        project.addOperation(operation2);
+        projectRepository.save(project);
+
         alreadySetup = true;
     }
 

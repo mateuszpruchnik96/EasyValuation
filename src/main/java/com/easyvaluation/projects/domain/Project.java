@@ -1,6 +1,7 @@
 package com.easyvaluation.projects.domain;
 
 import com.easyvaluation.foundations.domain.BaseEntity;
+import com.easyvaluation.materialslibrary.domain.item.Item;
 import com.easyvaluation.security.domain.UserAccount;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,7 +13,9 @@ import lombok.*;
 import javax.persistence.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -29,12 +32,19 @@ public class Project extends BaseEntity {
 
     private LocalDateTime openingProjectTime;
 
-
     private String itemsJSON;
 
     @Convert(converter = HashMapConverter.class)
 //    @JsonIgnore
+    // CHANGE CONVERTER!!!!
     private Map<Long, Integer> items;
+
+//    @ManyToOne
+//    @JoinColumn(name="operation_id", referencedColumnName = "id")
+//    @Embedded
+    @ElementCollection
+    @OrderColumn(name="INDEX")
+    private List<Operation> operationList = new ArrayList<Operation>();
 
     @ManyToOne
     @JoinColumn(name="user_account_id", referencedColumnName = "id")
@@ -63,12 +73,27 @@ public class Project extends BaseEntity {
         }
     }
 
+    public float totalPrice(){
+        return 0F;
+    }
 
-//    public Map<String, String> getItems(){
-//        Map<String, String> itemsString = new HashMap<String, String>();
-//        this.items.forEach((aLong, integer) -> itemsString.put(String.valueOf(aLong), String.valueOf(integer)));
-//        return itemsString;
-//    }
+    public Operation addOperation(Operation operation){
+        this.operationList.add(operation);
+        return operation;
+    }
+
+
+    public Map<String, String> generateItemsAsMapOfStrings(){
+        Map<String, String> itemsMap = new HashMap<>();
+
+        for (Map.Entry<Long, Integer> entry : this.items.entrySet()) {
+            String keyString = String.valueOf(entry.getKey());
+            String valueString = String.valueOf(entry.getValue());
+            itemsMap.put(keyString, valueString);
+        }
+
+        return itemsMap;
+    }
 
     public void serializeProductItems() throws JsonProcessingException{
         ObjectMapper objectMapper = new ObjectMapper();

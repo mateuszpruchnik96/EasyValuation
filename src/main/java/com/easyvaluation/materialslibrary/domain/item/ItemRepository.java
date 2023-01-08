@@ -18,4 +18,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 //    List<AbstractMap.SimpleEntry<Long,String>> findByFirstLetters(@Param("letters") String letters);
 
     List<Item> findByItemNameStartsWithIgnoreCase(String letters);
+
+
 }

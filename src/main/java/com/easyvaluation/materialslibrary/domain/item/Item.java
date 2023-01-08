@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "item")
+@Table(name = "item"
+        , uniqueConstraints = { @UniqueConstraint(columnNames = { "producer", "symbol" }) }
+)
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor

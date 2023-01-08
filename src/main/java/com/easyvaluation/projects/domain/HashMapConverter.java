@@ -18,7 +18,7 @@ public class HashMapConverter implements AttributeConverter<Map<Item,Integer>, S
     @Override
     public String convertToDatabaseColumn(Map<Item, Integer> items) {
 
-        String itemsJSON =null;
+        String itemsJSON = null;
         try {
             itemsJSON=objectMapper.writeValueAsString(items);
         } catch (final JsonProcessingException e){
@@ -34,7 +34,7 @@ public class HashMapConverter implements AttributeConverter<Map<Item,Integer>, S
         try {
             items=objectMapper.readValue(itemsJSON, Map.class);
         } catch(final IOException e){
-            System.out.println("JSON writting error: " + e);
+            System.out.println("JSON reading error: " + e);
         }
         return items;
     }
