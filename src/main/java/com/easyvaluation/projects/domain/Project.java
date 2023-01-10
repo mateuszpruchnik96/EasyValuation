@@ -3,6 +3,7 @@ package com.easyvaluation.projects.domain;
 import com.easyvaluation.foundations.domain.BaseEntity;
 import com.easyvaluation.materialslibrary.domain.item.Item;
 import com.easyvaluation.security.domain.UserAccount;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,10 +33,11 @@ public class Project extends BaseEntity {
 
     private LocalDateTime openingProjectTime;
 
-    private String itemsJSON;
+    //unnecessary probably
+//    private String itemsJSON;
 
     @Convert(converter = HashMapConverter.class)
-//    @JsonIgnore
+//    @JsonFormat(shape=JsonFormat.Shape.STRING)
     // CHANGE CONVERTER!!!!
     private Map<Long, Integer> items;
 
@@ -61,17 +63,6 @@ public class Project extends BaseEntity {
 //        this.serializeProductItems();
     }
 
-//    @JsonIgnore
-//    @JsonProperty(value = "items")
-    public String getItems() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(items);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     public float totalPrice(){
         return 0F;
@@ -95,14 +86,14 @@ public class Project extends BaseEntity {
         return itemsMap;
     }
 
-    public void serializeProductItems() throws JsonProcessingException{
-        ObjectMapper objectMapper = new ObjectMapper();
-        this.itemsJSON = objectMapper.writeValueAsString(items);
-    }
+//    public void serializeProductItems() throws JsonProcessingException{
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        this.itemsJSON = objectMapper.writeValueAsString(items);
+//    }
 
-    public void deserializeProductItems() throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        this.items = objectMapper.readValue(itemsJSON, HashMap.class);
-    }
+//    public void deserializeProductItems() throws IOException {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        this.items = objectMapper.readValue(itemsJSON, HashMap.class);
+//    }
 
 }

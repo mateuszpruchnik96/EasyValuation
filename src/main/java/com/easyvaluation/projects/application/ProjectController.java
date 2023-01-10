@@ -106,6 +106,7 @@ public class ProjectController {
     @PostMapping("/projects")
     public ResponseEntity<Project> save(@RequestBody Project project, @RequestHeader("Authorization") String token){
         Project savedProject = projectService.save(project, token);
+
         return ResponseEntity.ok(savedProject);
     }
 
