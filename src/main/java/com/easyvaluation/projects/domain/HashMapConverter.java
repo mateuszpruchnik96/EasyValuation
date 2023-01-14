@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 @Converter
@@ -49,9 +50,15 @@ public class HashMapConverter implements AttributeConverter<Map<Long,Integer>, S
     @Override
     public Map<Long, Integer> convertToEntityAttribute(String itemsJSON) {
 
-        Map<Long, Integer> items = null;
+        Map<String, Integer> itemsString = null;
+        Map<Long, Integer> items= new HashMap<>();
+
         try {
-            items=mapper.readValue(itemsJSON, Map.class);
+            itemsString = mapper.readValue(itemsJSON, Map.class);
+            itemsString.forEach((key, value) -> {
+                Long keyLong = Long.valueOf(key);
+                items.put(keyLong, value);
+            });
         } catch(final IOException e){
             System.out.println("JSON reading error: " + e);
         }
