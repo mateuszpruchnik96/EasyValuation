@@ -33,7 +33,8 @@ public class UserAccount extends BaseEntity {
     private LocalDateTime registrationTime;
     private LocalDateTime recentLoginTime;
 
-    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    fetch = FetchType.LAZY
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     List<Project> projects;
 
 //    @Enumerated(EnumType.STRING)

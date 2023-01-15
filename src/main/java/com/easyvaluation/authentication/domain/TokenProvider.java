@@ -2,6 +2,8 @@ package com.easyvaluation.authentication.domain;
 
 import com.easyvaluation.security.domain.UserAccount;
 import com.easyvaluation.security.domain.UserRole;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -9,11 +11,12 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
 
 
-import org.json.JSONException;
-import org.json.JSONObject;
+//import org.json.JSONException;
+//import org.json.JSONObject;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.ObjectError;
 
 import java.util.*;
 
@@ -28,7 +31,7 @@ public class TokenProvider {
                 .claim("role", this.roleParser(userAccount))
                 .claim("userId", userAccount.getId())
                 .setIssuedAt(new Date(currentTimeMillis))
-                .setExpiration(new Date(currentTimeMillis +(15*60*1000))) //15 minutes
+                .setExpiration(new Date(currentTimeMillis +(15*60*100))) //15 minutes
                 .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.encode(SecretKeyConfig.getSECRET_KEY()))
                 .compact();
     }
@@ -38,11 +41,11 @@ public class TokenProvider {
         Base64.Decoder decoder = Base64.getUrlDecoder();
 
         String header = new String(decoder.decode(chunks[0]));
-        try {
-            JSONObject jsonObject = new JSONObject("{\"phonetype\":\"N95\",\"cat\":\"WP\"}");
-        }catch (JSONException err){
-            System.out.println("Error"+ err.toString());
-        }
+//        try {
+//            JSONObject jsonObject = new JSONObject("{\"phonetype\":\"N95\",\"cat\":\"WP\"}");
+//        }catch (JSONException err){
+//            System.out.println("Error"+ err.toString());
+//        }
 
         String payload = new String(decoder.decode(chunks[1]));
 
@@ -100,15 +103,22 @@ public class TokenProvider {
         if (token == null) {
             return null;
         } else {
-            try{
-                JSONObject jsonPayload = new JSONObject(payload);
-                System.out.println(jsonPayload.get("userId"));
-                Long userId = Long.valueOf(jsonPayload.get("userId").toString());
+//            try{
+//                JSONObject jsonPayload = new JSONObject(payload);
+                Map map = new HashMap();
+                try {
+                    map = new ObjectMapper().readValue(payload, Map.class);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+//                System.out.println(jsonPayload.get("userId"));
+//                Long userId = Long.valueOf(jsonPayload.get("userId").toString());
+                Long userId = Long.valueOf(map.get("userId").toString());
                 System.out.println(userId);
                 return userId;
-            } catch (JSONException e){
-                throw new JSONException(e);
-            }
+//            } catch (JSONException e){
+//                throw new JSONException(e);
+//            }
         }
     }
 

@@ -10,6 +10,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.IOException;
@@ -33,17 +35,9 @@ public class Project extends BaseEntity {
 
     private LocalDateTime openingProjectTime;
 
-    //unnecessary probably
-//    private String itemsJSON;
-
     @Convert(converter = HashMapConverter.class)
-//    @JsonFormat(shape=JsonFormat.Shape.STRING)
-    // CHANGE CONVERTER!!!!
     private Map<Long, Integer> items;
 
-//    @ManyToOne
-//    @JoinColumn(name="operation_id", referencedColumnName = "id")
-//    @Embedded
     @ElementCollection
     @OrderColumn(name="INDEX")
     private List<Operation> operationList = new ArrayList<Operation>();
@@ -60,9 +54,7 @@ public class Project extends BaseEntity {
 
     public void addItem(Long itemId, Integer integer) throws JsonProcessingException {
         this.items.put(itemId, integer);
-//        this.serializeProductItems();
     }
-
 
     public float totalPrice(){
         return 0F;
@@ -72,7 +64,6 @@ public class Project extends BaseEntity {
         this.operationList.add(operation);
         return operation;
     }
-
 
     public Map<String, String> generateItemsAsMapOfStrings(){
         Map<String, String> itemsMap = new HashMap<>();
@@ -85,15 +76,5 @@ public class Project extends BaseEntity {
 
         return itemsMap;
     }
-
-//    public void serializeProductItems() throws JsonProcessingException{
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        this.itemsJSON = objectMapper.writeValueAsString(items);
-//    }
-
-//    public void deserializeProductItems() throws IOException {
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        this.items = objectMapper.readValue(itemsJSON, HashMap.class);
-//    }
 
 }

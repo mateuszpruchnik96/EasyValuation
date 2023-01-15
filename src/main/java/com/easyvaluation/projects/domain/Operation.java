@@ -24,7 +24,7 @@ public class Operation {
 
     private float hourPrice;
 
-    public float getCost(){
+    public float generateCost(){
         return this.hourPrice*this.hours;
     }
 }

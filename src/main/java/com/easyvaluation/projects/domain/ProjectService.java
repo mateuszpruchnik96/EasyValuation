@@ -87,16 +87,45 @@ public class ProjectService implements AbstractService<Project> {
         return listOfPairs;
     }
 
+    public Map<Item, Integer> getProjectItemsMap(Project project) throws NoSuchFieldException {
+
+        Map<Long, Integer> items = new HashMap<>();
+
+        project.generateItemsAsMapOfStrings()
+                .forEach((key, value) -> items.put(
+                        Long.valueOf(key), Integer.valueOf(value))
+                );
+
+        List<Long> itemIds = new ArrayList<Long>(project.generateItemsAsMapOfStrings().keySet().stream().map(i-> Long.valueOf(i)).collect(Collectors.toList()));
+        List<Item> itemsList;
+        try {
+            itemsList = itemService.findItemsById(itemIds);
+        } catch (NoSuchFieldException e) {
+            throw e;
+        }
+        Map<Item, Integer> itemsMap = new HashMap<>();
+        List<ItemWithQuantity> listOfPairs = new ArrayList<>();
+        for(Item item : itemsList){
+            itemsMap.put(item, items.get(item.getId()));
+        }
+
+        return itemsMap;
+    }
+
 //    AbstractMap.SimpleEntry<List<Project>, List<ItemWithQuantity>>
     public Object[] getProjectByUserIdAndProjectIdWithItemObjects(Long projectId, String token) throws EntityNotFoundException, JsonProcessingException {
         Optional<Project> userProject = findProjectByUserIdAndProjectId(projectId, token);
         List<ItemWithQuantity> itemsWithQuantities;
+        Map<Item,Integer> map;
 
         if(userProject.isPresent()){
             try {
                 itemsWithQuantities = getProjectItemsListOfPairs(userProject.get());
+//                map = getProjectItemsMap(userProject.get());
+
             } catch (NoSuchFieldException e) {
                 itemsWithQuantities = new ArrayList<>();
+//                map = new HashMap<>();
             }
         } else throw new EntityNotFoundException("There is no such project!");
 

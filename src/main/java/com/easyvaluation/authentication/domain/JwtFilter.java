@@ -27,7 +27,7 @@ public class JwtFilter extends BasicAuthenticationFilter {
 
 
     @Override
-    public void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws IOException{
 
         String header = httpServletRequest.getHeader("Authorization");
         String endpoint = httpServletRequest.getServletPath();
@@ -45,6 +45,12 @@ public class JwtFilter extends BasicAuthenticationFilter {
                 httpServletResponse.sendError(401, "ExpiredJwtException");
             }
         }
-        filterChain.doFilter(httpServletRequest,httpServletResponse);
+        try {
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
+        } catch(ServletException e){
+            System.out.println(e);
+            System.out.println(httpServletRequest);
+            System.out.println(httpServletResponse);
+        }
     }
 }

@@ -40,6 +40,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        if(userRoleRepository.findByName("ROLE_USER") != null) alreadySetup = true;
         if(alreadySetup) return;
 
         createRoleIfNotFound("ROLE_ADMIN");
@@ -63,12 +64,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         Item screw = new SinglePart("Elesa-Ganter", "G12543", 0.1F);
         screw.setItemName("Screw");
-//        itemRepository.save(screw);
+        itemRepository.save(screw);
 
 
         Item bolt = new SinglePart("Kipp", "XXXX", 0.12F);
         bolt.setItemName("Bolt");
-//        itemRepository.save(bolt);
+        itemRepository.save(bolt);
 
         Operation operation1 = new Operation();
         operation1.setDescription("Operation 1");
@@ -82,12 +83,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         Project project = new Project();
         project.setUserAccount(userAccountRepository.findByLogin(user.getLogin()));
-//        try {
-//            project.addItem(itemRepository.findByItemNameStartsWithIgnoreCase("Screw").get(0).getId(), 2);
-//            project.addItem(itemRepository.findByItemNameStartsWithIgnoreCase("Bolt").get(0).getId(), 10);
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            project.addItem(itemRepository.findByItemNameStartsWithIgnoreCase("Screw").get(0).getId(), 2);
+            project.addItem(itemRepository.findByItemNameStartsWithIgnoreCase("Bolt").get(0).getId(), 10);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         project.addOperation(operation1);
         project.addOperation(operation2);
         projectRepository.save(project);
