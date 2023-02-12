@@ -6,16 +6,12 @@
 
 package com.easyvaluation.projects.application;
 
-import com.easyvaluation.materialslibrary.domain.item.Item;
-import com.easyvaluation.projects.domain.ItemWithQuantity;
 import com.easyvaluation.projects.domain.Project;
 import com.easyvaluation.projects.domain.ProjectRepository;
 import com.easyvaluation.projects.domain.ProjectService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -93,6 +89,8 @@ public class ProjectController {
             return ResponseEntity.notFound().build();
         } catch (JsonProcessingException e){
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+        } catch (MalformedJwtException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
@@ -105,9 +103,15 @@ public class ProjectController {
      */
     @PostMapping("/projects")
     public ResponseEntity<Project> save(@RequestBody Project project, @RequestHeader("Authorization") String token){
+
+        try{
         Project savedProject = projectService.save(project, token);
 
         return ResponseEntity.ok(savedProject);
+
+        } catch (MalformedJwtException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @DeleteMapping("/projects/{id}")

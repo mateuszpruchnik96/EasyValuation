@@ -2,11 +2,15 @@ package com.easyvaluation.materialslibrary.domain.item;
 
 import com.easyvaluation.foundations.domain.BaseEntity;
 import com.easyvaluation.projects.domain.Project;
+import com.easyvaluation.projects.domain.ProjectItems;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.Set;
 
 @Entity
 @Table(name = "item"
@@ -23,9 +27,14 @@ public abstract class Item extends BaseEntity {
     @Enumerated(EnumType.STRING)
     ItemType type;
 
+    Boolean custom;
+
 //    @ManyToOne(fetch = FetchType.EAGER)
 //    @JoinColumn(name = "project_id")
 //    Project project;
+
+//    @OneToMany(mappedBy = "item")
+//    private Set<ProjectItems> projectItems;
 
     @Column(name = "item_name")
     String itemName;
@@ -33,7 +42,6 @@ public abstract class Item extends BaseEntity {
     float price;
 
     String description;
-
 
     public String getItemName() {
         return itemName;

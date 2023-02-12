@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.*;
@@ -39,7 +40,8 @@ public class ProjectService implements AbstractService<Project> {
         return entity;
     }
 
-     public Project save(Project entity, String token) {
+    @Transactional
+    public Project save(Project entity, String token) {
         Long userAccountId = this.tokenIdDecoder(token);
         UserAccount user = userAccountRepository.getById(userAccountId);
         entity.setUserAccount(user);
@@ -78,7 +80,6 @@ public class ProjectService implements AbstractService<Project> {
         } catch (NoSuchFieldException e) {
             throw e;
         }
-//        Map<Item, Integer> itemsMap = new HashMap<>();
         List<ItemWithQuantity> listOfPairs = new ArrayList<>();
         for(Item item : itemsList){
             listOfPairs.add(new ItemWithQuantity(item, items.get(item.getId())));

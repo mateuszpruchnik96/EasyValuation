@@ -15,8 +15,7 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 public class Operation {
 
-// added in Product entity
-//    private int index;
+    private String title;
 
     private String description;
 

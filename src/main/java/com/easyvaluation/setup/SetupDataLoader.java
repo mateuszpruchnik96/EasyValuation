@@ -5,6 +5,7 @@ import com.easyvaluation.materialslibrary.domain.item.Item;
 import com.easyvaluation.materialslibrary.domain.item.ItemRepository;
 import com.easyvaluation.projects.domain.Operation;
 import com.easyvaluation.projects.domain.Project;
+import com.easyvaluation.projects.domain.ProjectItems;
 import com.easyvaluation.projects.domain.ProjectRepository;
 import com.easyvaluation.security.domain.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,8 +15,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
@@ -89,9 +89,39 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+
+        ProjectItems projectItem1 = new ProjectItems();
+        projectItem1.setProject(project);
+        projectItem1.setItem(itemRepository.findByItemNameStartsWithIgnoreCase("Bolt").get(0));
+        projectItem1.setQuantity(2F);
+
+        ProjectItems projectItem2 = new ProjectItems();
+        projectItem2.setProject(project);
+        projectItem2.setItem(bolt);
+        projectItem2.setQuantity(12F);
+
+        project.getProjectItems().add(projectItem1);
+        project.getProjectItems().add(projectItem2);
+
         project.addOperation(operation1);
         project.addOperation(operation2);
+        project.setName("First project");
         projectRepository.save(project);
+
+
+        Item item = new SinglePart();
+        item.setItemName("item 1");
+        itemRepository.save(item);
+
+        Project projectx = new Project();
+        projectx.setName("project 1");
+        projectRepository.save(projectx);
+
+        ProjectItems projectItem = new ProjectItems();
+        projectItem.setQuantity(10);
+        projectItem.setItem(item);
+        project.addProjectItem(projectItem);
+        projectRepository.save(projectx);
 
         alreadySetup = true;
     }

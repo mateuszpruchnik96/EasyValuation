@@ -3,23 +3,15 @@ package com.easyvaluation.projects.domain;
 import com.easyvaluation.foundations.domain.BaseEntity;
 import com.easyvaluation.materialslibrary.domain.item.Item;
 import com.easyvaluation.security.domain.UserAccount;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.easyvaluation.security.domain.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Entity
 @Table(name="project")
@@ -38,6 +30,9 @@ public class Project extends BaseEntity {
     @Convert(converter = HashMapConverter.class)
     private Map<Long, Integer> items;
 
+    @OneToMany(mappedBy = "project", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<ProjectItems> projectItems = new ArrayList<>();
+
     @ElementCollection
     @OrderColumn(name="INDEX")
     private List<Operation> operationList = new ArrayList<Operation>();
@@ -50,10 +45,21 @@ public class Project extends BaseEntity {
     public Project(){
         this.items = Maps.newHashMap();
         this.openingProjectTime = LocalDateTime.now();
+        this.projectItems= new ArrayList<>();
     }
 
     public void addItem(Long itemId, Integer integer) throws JsonProcessingException {
         this.items.put(itemId, integer);
+    }
+
+    public void addProjectItem(ProjectItems projectItem) {
+        projectItems.add(projectItem);
+        projectItem.setProject(this);
+    }
+
+    public void removeProjectItem(ProjectItems projectItem) {
+        projectItems.remove(projectItem);
+        projectItem.setProject(null);
     }
 
     public float totalPrice(){

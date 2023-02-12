@@ -138,8 +138,7 @@ class ProjectControllerIT {
                 .andExpect(result -> {
                     objectMapper.readValue( result.getResponse().getContentAsString(), Project.class).getItems().get(itemId).equals(2);
                 })
-                .andReturn()
-                ;
+                .andReturn();
 
         projectRepository.deleteById(objectMapper.readValue(resultx.getResponse().getContentAsString(), Project.class).getId());
     }

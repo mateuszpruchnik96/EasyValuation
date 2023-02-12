@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Set;
 
 @Entity

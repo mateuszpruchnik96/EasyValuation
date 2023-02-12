@@ -1,6 +1,7 @@
 package com.easyvaluation.authentication.domain;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +44,8 @@ public class JwtFilter extends BasicAuthenticationFilter {
 
             } catch (ExpiredJwtException e){
                 httpServletResponse.sendError(401, "ExpiredJwtException");
+            } catch (MalformedJwtException e){
+                httpServletResponse.sendError(401, "MalformedJwtException");
             }
         }
         try {
