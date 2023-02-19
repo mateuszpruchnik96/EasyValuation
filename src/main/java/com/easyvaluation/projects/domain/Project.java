@@ -5,6 +5,7 @@ import com.easyvaluation.materialslibrary.domain.item.Item;
 import com.easyvaluation.security.domain.UserAccount;
 import com.easyvaluation.security.domain.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Maps;
 import lombok.*;
@@ -31,6 +32,7 @@ public class Project extends BaseEntity {
     private Map<Long, Integer> items;
 
     @OneToMany(mappedBy = "project", orphanRemoval = true, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("project")
     private List<ProjectItems> projectItems = new ArrayList<>();
 
     @ElementCollection

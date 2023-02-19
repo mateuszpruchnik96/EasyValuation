@@ -2,6 +2,7 @@ package com.easyvaluation.projects.domain;
 
 import com.easyvaluation.foundations.domain.BaseEntity;
 import com.easyvaluation.materialslibrary.domain.item.Item;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ public class ProjectItems extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "project_id")
+    @JsonIgnoreProperties("projectItems")
     private Project project;
 
     @ManyToOne

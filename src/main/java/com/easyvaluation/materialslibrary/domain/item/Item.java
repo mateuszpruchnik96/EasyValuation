@@ -29,13 +29,6 @@ public abstract class Item extends BaseEntity {
 
     Boolean custom;
 
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "project_id")
-//    Project project;
-
-//    @OneToMany(mappedBy = "item")
-//    private Set<ProjectItems> projectItems;
-
     @Column(name = "item_name")
     String itemName;
 

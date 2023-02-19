@@ -32,6 +32,12 @@ public class ProjectService implements AbstractService<Project> {
     @Autowired
     TokenProvider tokenProvider;
 
+    /**
+     * Saves a new project, associating it with the current user.
+     *
+     * @param entity the project to be saved
+     * @return the saved project entity
+     */
     public Project save(Project entity) {
         // TO REWORK
         UserAccount user = userAccountRepository.getById(1L);
@@ -40,6 +46,13 @@ public class ProjectService implements AbstractService<Project> {
         return entity;
     }
 
+    /**
+     * Saves a new project, associating it with the user specified by the provided token.
+     *
+     * @param entity the project to be saved
+     * @param token the authentication token for the user
+     * @return the saved project entity
+     */
     @Transactional
     public Project save(Project entity, String token) {
         Long userAccountId = this.tokenIdDecoder(token);
@@ -50,6 +63,12 @@ public class ProjectService implements AbstractService<Project> {
         return entity;
     }
 
+    /**
+     * Finds all projects associated with the user specified by the provided token.
+     *
+     * @param token the authentication token for the user
+     * @return a list of projects associated with the user
+     */
     public List<Project> findProjectsByUserId(String token){
         Long userAccountId = this.tokenIdDecoder(token);
 
@@ -57,6 +76,13 @@ public class ProjectService implements AbstractService<Project> {
         return userProjects;
     }
 
+    /**
+     * Finds the project with the specified ID that is associated with the user specified by the provided token.
+     *
+     * @param projectId the ID of the project to find
+     * @param token the authentication token for the user
+     * @return an Optional containing the project with the specified ID, if it exists and is associated with the user
+     */
     public Optional<Project> findProjectByUserIdAndProjectId(Long projectId, String token){
         Long userAccountId = this.tokenIdDecoder(token);
 
@@ -64,15 +90,24 @@ public class ProjectService implements AbstractService<Project> {
         return userProject;
     }
 
+    /**
+     * Retrieves a list of {@link ItemWithQuantity} objects for the items associated with the specified project.
+     *
+     * @param project the project for which to retrieve the list of items with quantities
+     * @return a list of {@link ItemWithQuantity} objects, each of which represents an item associated with the project and its quantity
+     * @throws NoSuchFieldException if an error occurs while retrieving the items associated with the project
+     */
     public List<ItemWithQuantity> getProjectItemsListOfPairs(Project project) throws NoSuchFieldException {
 
         Map<Long, Integer> items = new HashMap<>();
 
+        // Convert the project's items map from String keys and values to Long and Integer values, and store the result in the items map
         project.generateItemsAsMapOfStrings()
                 .forEach((key, value) -> items.put(
                     Long.valueOf(key), Integer.valueOf(value))
                 );
 
+        // Create a list of item IDs from the items map
         List<Long> itemIds = new ArrayList<Long>(project.generateItemsAsMapOfStrings().keySet().stream().map(i-> Long.valueOf(i)).collect(Collectors.toList()));
         List<Item> itemsList;
         try {
@@ -80,6 +115,8 @@ public class ProjectService implements AbstractService<Project> {
         } catch (NoSuchFieldException e) {
             throw e;
         }
+
+        // Create a list of ItemWithQuantity objects, each of which represents an item associated with the project and its quantity
         List<ItemWithQuantity> listOfPairs = new ArrayList<>();
         for(Item item : itemsList){
             listOfPairs.add(new ItemWithQuantity(item, items.get(item.getId())));
