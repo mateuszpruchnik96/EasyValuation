@@ -9,15 +9,18 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 
 @Entity
 @Table(name = "PROJECT_ITEMS")
 @Getter
 @Setter
-
+@NoArgsConstructor
 public class ProjectItems extends BaseEntity {
 
+    public ProjectItems(Item item, float quantity){
+        this.item = item;
+        this.quantity = quantity;
+    }
 
     @ManyToOne
     @JoinColumn(name = "project_id")

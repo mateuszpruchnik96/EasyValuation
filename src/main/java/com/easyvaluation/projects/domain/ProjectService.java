@@ -24,6 +24,9 @@ public class ProjectService implements AbstractService<Project> {
     ProjectRepository projectRepository;
 
     @Autowired
+    ProjectItemsRepository projectItemsRepository;
+
+    @Autowired
     UserAccountRepository userAccountRepository;
 
     @Autowired
@@ -172,6 +175,7 @@ public class ProjectService implements AbstractService<Project> {
 
         return pair;
     }
+
 
     private Long tokenIdDecoder(String token){
         String jwt = token.substring(7);
