@@ -103,12 +103,12 @@ class ProjectControllerIT {
 
         project.setUserAccount(user);
         Long itemId = itemRepository.findByItemNameStartsWithIgnoreCase("Screw").get(0).getId();
-        try {
-            project.addItem(itemId, 2);
+//        try {
+//            project.addItem(itemId, 2);
 //            project.addItem(itemRepository.findByItemNameStartsWithIgnoreCase("Bolt").get(0).getId(), 10);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
         project.addOperation(operation1);
         project.addOperation(operation2);
 
@@ -132,12 +132,12 @@ class ProjectControllerIT {
                     .andExpect(result -> {
                         objectMapper.readValue( result.getResponse().getContentAsString(), Project.class).getOperationList().get(1).equals(operation2);
                     })
-                .andExpect(result -> {
-                    objectMapper.readValue( result.getResponse().getContentAsString(), Project.class).getItems().containsKey(itemId);
-                })
-                .andExpect(result -> {
-                    objectMapper.readValue( result.getResponse().getContentAsString(), Project.class).getItems().get(itemId).equals(2);
-                })
+//                .andExpect(result -> {
+//                    objectMapper.readValue( result.getResponse().getContentAsString(), Project.class).getItems().containsKey(itemId);
+//                })
+//                .andExpect(result -> {
+//                    objectMapper.readValue( result.getResponse().getContentAsString(), Project.class).getItems().get(itemId).equals(2);
+//                })
                 .andReturn();
 
         projectRepository.deleteById(objectMapper.readValue(resultx.getResponse().getContentAsString(), Project.class).getId());

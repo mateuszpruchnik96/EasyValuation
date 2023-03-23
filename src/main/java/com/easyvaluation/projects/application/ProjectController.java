@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.NestedServletException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.*;
@@ -76,23 +77,23 @@ public class ProjectController {
      * @param projectId - ID of project
      * @return - Response with project and status
      */
-    @GetMapping("/projects/project_with_items")
+//    @GetMapping("/projects/project_with_items")
     //ResponseEntity<AbstractMap.SimpleEntry<List<Project>,List<ItemWithQuantity>>>
-    public ResponseEntity<Object[]> getOneByUserTokenAndProjectIdWithItems(@RequestHeader("Authorization") String token, @RequestParam(value="projectId") String projectId){
-
-        try {
-//            AbstractMap.SimpleEntry<List<Project>, List<ItemWithQuantity>>
-                   Object[] service = projectService.getProjectByUserIdAndProjectIdWithItemObjects(Long.valueOf(projectId), token);
-
-            return ResponseEntity.ok(service);
-        } catch(EntityNotFoundException e){
-            return ResponseEntity.notFound().build();
-        } catch (JsonProcessingException e){
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
-        } catch (MalformedJwtException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-    }
+//    public ResponseEntity<Object[]> getOneByUserTokenAndProjectIdWithItems(@RequestHeader("Authorization") String token, @RequestParam(value="projectId") String projectId){
+//
+//        try {
+////            AbstractMap.SimpleEntry<List<Project>, List<ItemWithQuantity>>
+//                   Object[] service = projectService.getProjectByUserIdAndProjectIdWithItemObjects(Long.valueOf(projectId), token);
+//
+//            return ResponseEntity.ok(service);
+//        } catch(EntityNotFoundException e){
+//            return ResponseEntity.notFound().build();
+//        } catch (JsonProcessingException e){
+//            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+//        } catch (MalformedJwtException e){
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//    }
 
     /**
      * Update project for user by token and projectId
@@ -111,6 +112,8 @@ public class ProjectController {
 
         } catch (MalformedJwtException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (NestedServletException el) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }
     }
 

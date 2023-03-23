@@ -83,12 +83,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         Project project = new Project();
         project.setUserAccount(userAccountRepository.findByLogin(user.getLogin()));
-        try {
-            project.addItem(itemRepository.findByItemNameStartsWithIgnoreCase("Screw").get(0).getId(), 2);
-            project.addItem(itemRepository.findByItemNameStartsWithIgnoreCase("Bolt").get(0).getId(), 10);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            project.addItem(itemRepository.findByItemNameStartsWithIgnoreCase("Screw").get(0).getId(), 2);
+//            project.addItem(itemRepository.findByItemNameStartsWithIgnoreCase("Bolt").get(0).getId(), 10);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
 
         ProjectItems projectItem1 = new ProjectItems();
         projectItem1.setProject(project);

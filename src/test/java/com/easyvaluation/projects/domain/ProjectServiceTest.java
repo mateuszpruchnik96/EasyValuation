@@ -60,8 +60,8 @@ class ProjectServiceTest {
 
         project.addOperation(operation1);
         project.addOperation(operation2);
-        project.addItem(screw.getId(), 3);
-        project.addItem(bolt.getId(),20);
+//        project.addItem(screw.getId(), 3);
+//        project.addItem(bolt.getId(),20);
         itemIds.add(screw.getId());
         itemIds.add(bolt.getId());
     }

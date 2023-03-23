@@ -28,12 +28,9 @@ public class Project extends BaseEntity {
 
     private LocalDateTime openingProjectTime;
 
-    @Convert(converter = HashMapConverter.class)
-    private Map<Long, Integer> items;
-
     @OneToMany(mappedBy = "project", orphanRemoval = true, cascade = CascadeType.ALL)
     @JsonIgnoreProperties("project")
-    private List<ProjectItems> projectItems = new ArrayList<>();
+    private List<ProjectItems> projectItems;
 
     @ElementCollection
     @OrderColumn(name="INDEX")
@@ -45,13 +42,8 @@ public class Project extends BaseEntity {
     UserAccount userAccount;
 
     public Project(){
-        this.items = Maps.newHashMap();
         this.openingProjectTime = LocalDateTime.now();
         this.projectItems= new ArrayList<>();
-    }
-
-    public void addItem(Long itemId, Integer integer) throws JsonProcessingException {
-        this.items.put(itemId, integer);
     }
 
     public void addProjectItem(ProjectItems projectItem) {
@@ -71,18 +63,6 @@ public class Project extends BaseEntity {
     public Operation addOperation(Operation operation){
         this.operationList.add(operation);
         return operation;
-    }
-
-    public Map<String, String> generateItemsAsMapOfStrings(){
-        Map<String, String> itemsMap = new HashMap<>();
-
-        for (Map.Entry<Long, Integer> entry : this.items.entrySet()) {
-            String keyString = String.valueOf(entry.getKey());
-            String valueString = String.valueOf(entry.getValue());
-            itemsMap.put(keyString, valueString);
-        }
-
-        return itemsMap;
     }
 
 }
